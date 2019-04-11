@@ -42,9 +42,6 @@ esac
 #kill everything
 pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
 
-#remove old backups
-ls | grep -e [JPSApps]_ | xargs rm -fr
-
 #backup the JBL Token and Cash
 cp $TOKEN ./
 if [ $TYPE = AppAps ]
@@ -54,6 +51,9 @@ fi
 #backup json files
 cp $ADDJS .
 cp $JS .
+
+#remove old backups
+ls | grep -e [JPSApps]_ | xargs rm -fr
 
 #backup
 mv ./JPSApps ./JPSApps_old
