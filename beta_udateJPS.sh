@@ -27,8 +27,8 @@ case $TYPE in
 	JS=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json
 	;;
 	AppApl)
-	TOKEN=/home/root/JPSApps/JPSApplication/Resources/ApsApp/AppDB.fdb
-	JS=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json
+	TOKEN=/home/root/JPSApps/JPSApplication/Resources/AplApp/AppDB.fdb
+	JS=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json
 	;;
 	
 esac
