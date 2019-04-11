@@ -9,8 +9,15 @@ if [ $(pwd) != $WORKDIR ]
 	then 
 	cd $WORKDIR
 fi
+
+#double check that we have the package
+if ! [ -f ./JPSApps.tar.gx ]
+	then
+	echo 'No JPSApps.tar.gz package found for update '
+	exit 1
+fi
+
 #who am I?
-#backup stuff
 case $TYPE in 
 	AppAps)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/ApsApp/AppDB.fdb
@@ -30,7 +37,6 @@ case $TYPE in
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/AplApp/AppDB.fdb
 	JS=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json
 	;;
-	
 esac
 
 #kill everything
