@@ -59,7 +59,7 @@ ls | grep -e [JPSApps]_ | xargs rm -fr
 mv ./JPSApps ./JPSApps_old
 
 #untar the new package
-tar -xf JPSApps.tar.gz
+tar -xf JPSApps.tar.gz --no-same-owner
 chmod +x -R JPSApps
 
 #restore 
