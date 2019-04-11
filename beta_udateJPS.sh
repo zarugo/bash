@@ -11,7 +11,7 @@ if [ $(pwd) != $WORKDIR ]
 fi
 
 #double check that we have the package
-if ! [ -f ./JPSApps.tar.gx ]
+if ! [ -f ./JPSApps.tar.gz ]
 	then
 	echo 'No JPSApps.tar.gz package found for update '
 	exit 1
