@@ -10,6 +10,7 @@ if [ $(pwd) != $WORKDIR ]
 	cd $WORKDIR
 fi
 #who am I?
+#backup stuff
 case $TYPE in 
 	AppAps)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/ApsApp/AppDB.fdb
@@ -25,6 +26,10 @@ case $TYPE in
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/LeApp/AppDB.fdb
 	JS=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json
 	;;
+	AppApl)
+	TOKEN=/home/root/JPSApps/JPSApplication/Resources/ApsApp/AppDB.fdb
+	JS=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json
+	;;
 	
 esac
 
@@ -35,7 +40,7 @@ pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
 ls | grep -e [JPSApps]_ | xargs rm -fr
 
 #backup the JBL Token and Cash
-cp $TOKEN .
+cp $TOKEN ./
 if [ $TYPE = AppAps ]
 	then 
 	cp $CASH .
