@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 WORKDIR=/home/root
 TYPE=$(ps | grep [J]PSApplication | awk '{print $6}')
 ADDJS=/home/root/JPSApps/JPSApplication/Resources/AdditionalData.json
