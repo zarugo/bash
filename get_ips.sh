@@ -1,5 +1,5 @@
 #!/bin/bash
-#commit test :)
+#commit test ;)
 set -x
 
 IPS=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
