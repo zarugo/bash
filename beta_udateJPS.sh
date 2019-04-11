@@ -37,10 +37,15 @@ case $TYPE in
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/AplApp/AppDB.fdb
 	JS=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json
 	;;
+	*)
+	echo 'Application type not recognized, is the JPS Application is running?'
+	exit 1
+	;;
 esac
 
 #kill everything
 pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
+sleep 1
 
 #backup the JBL Token and Cash
 cp $TOKEN ./
