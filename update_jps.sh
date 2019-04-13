@@ -1,13 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 DEVICE=$1
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 
 
-function man() {
-    echo "usage: $0 [IP] "
-    echo "          You must provide the IP address of the device you want to update as an argument"
-    
+man() {
+    echo -e "usage: update_jps.sh [IP address]  "
+    echo -e "          You must provide the IP address of the device you want to update as an argument"
+
 }
 
 if [ $# -lt 1 ]
@@ -16,19 +16,18 @@ then
 	exit 1
 
 elif [ $# -gt 1 ]
-then 
-	echo 'The update command supports only 1 argument (the IP address of the device to upgrade)'
+then
+	echo -e "The update command supports only 1 argument (the IP address of the device to upgrade)\n"
 	man
 	exit 1
 elif ! [[ $1 =~ $ip4 ]]
-
 then
-        echo 'This is not a valid IP address!'
+        echo -e "This is not a valid IP address!\n"
         man
 	exit 1
 fi
 
-function get_config(){
+get_config() {
 	TYPE=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 	case $TYPE in
 		AppAps)
@@ -51,4 +50,7 @@ function get_config(){
 esac
 }
 
-	
+get_config
+
+
+
