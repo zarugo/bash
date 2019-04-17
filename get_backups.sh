@@ -52,7 +52,7 @@ if [ $1 = all ]
 				chmod 777 $TEMP_DIR
 				echo Creating archive...
 				TYPE=$(ssh -o "StrictHostKeyChecking no" root@${DEVICE} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
-				tar cfz $TEMP_DIR/${PC}_${DEVICE}_${TYPE}_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
+				tar -cfz $TEMP_DIR/${PC}_${DEVICE}_${TYPE}_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 				mv $TEMP_DIR/* $BACKUP_DIR
 			done
 	else
@@ -63,7 +63,7 @@ if [ $1 = all ]
 	 			chmod 777 $TEMP_DIR
 	 			echo Creating archive...
 				TYPE=$(ssh -o "StrictHostKeyChecking no" root@${DEVICE} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
-				tar cfz $TEMP_DIR/${PC}_${DEVICE}_${TYPE}_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
+				tar -cfz $TEMP_DIR/${PC}_${DEVICE}_${TYPE}_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 	 			mv $TEMP_DIR/* $BACKUP_DIR
 			done
 fi
