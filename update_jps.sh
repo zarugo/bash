@@ -4,7 +4,7 @@ octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 
 
-man() {
+function man {
     echo -e "You must provide the IP address of the device you want to update as an argument"
     echo -e "\nUsage:\n   $0 [IP] \n"
 }
@@ -37,7 +37,7 @@ then
     exit 1
 fi
 
-get_config() {
+function get_config {
 	TYPE=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 	case $TYPE in
 		AppAps)
