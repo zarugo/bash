@@ -5,10 +5,14 @@ ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 
 
 man() {
-    echo -e "usage: update_jps.sh [IP address]  "
-    echo -e "          You must provide the IP address of the device you want to update as an argument"
-
+    echo -e "You must provide the IP address of the device you want to update as an argument"
+    echo -e "\nUsage:\n   $0 [IP] \n"
 }
+if [[ ( $1 == "--help") ||  $1 == "-h" ]]
+then
+  man
+  exit 0
+fi
 
 if [ $# -lt 1 ]
 then
@@ -17,19 +21,19 @@ then
 
 elif [ $# -gt 1 ]
 then
-	echo -e "The update command supports only 1 argument (the IP address of the device to upgrade)\n"
+	echo -e "\nThe update command supports only 1 argument (the IP address of the device to upgrade)\n"
 	man
 	exit 1
 elif ! [[ $1 =~ $ip4 ]]
 then
-        echo -e "This is not a valid IP address!\n"
+        echo -e "\nThis is not a valid IP address!\n"
         man
 	exit 1
 fi
 
 if ! [ -d ./JPSApps ]
 then
-    echo -e "ERROR! \n The update package has not been found, make sure that you have 'JPSApps' in this same folder"
+    echo -e "\nERROR! \nThe update package has not been found, make sure that you have 'JPSApps' in this same folder\n"
     exit 1
 fi
 
@@ -49,7 +53,7 @@ get_config() {
 				scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 				;;
 		     *)
-				echo "Device type is unknown...make sure the JPSApplication is running on the device"
+				echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
 				exit 1
 				;;
 
