@@ -1,12 +1,24 @@
 #!/bin/bash
 #set -x
+ISCYG=$(uname -s)
+
 function GET_DEVICES () {
-	IPS=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
-	for i in $IPS
-	do 
-		TYPE=$(ssh -o "StrictHostKeyChecking no" root@${i} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
-		echo "${TYPE}_${i}"
-	done
+	case $ISCYG in
+		Linux*)
+		IPS=$(arp |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
+		for i in $IPS
+		do
+			TYPE=$(ssh -o "StrictHostKeyChecking no" root@${i} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+			echo "${TYPE}_${i}"
+		done
+		;;
+		CYGWIN*)
+		IPS=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
+		for i in $IPS
+		do
+			TYPE=$(ssh -o "StrictHostKeyChecking no" root@${i} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+			echo "${TYPE}_${i}"
+		done
 }
 if [ $# -lt 1 ]
 then
@@ -19,7 +31,7 @@ then
 					Quit)
 					echo "Bye!"
 					exit
-					;;		
+					;;
 					*)
 		  			echo "You picked $DEVICE"
 	              	PS3='Which command do you want to send?: '
@@ -32,7 +44,7 @@ then
 									;;
 									HW_Reboot)
 									echo "The devices will do an Hardware reboot"
-									IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')" 	
+									IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
 									curl -X POST -d '{"mode":"Hardware"}' http://${IP}:65000/jps/api/command/reboot --header "Content-Type:application/json"
 									;;
 									SW_Reboot)
@@ -62,7 +74,7 @@ then
 			   					esac
 		   					done
 					;;
-		
+
 				esac
 			done
 
@@ -103,9 +115,3 @@ else
                    	done
 
 fi
-
-                
-
-
-
-
