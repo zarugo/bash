@@ -39,39 +39,45 @@ then
 		  					do
 			  					case $COMMAND in
 									Quit)
-									echo "Bye!"
+									echo -e "Bye!\n"
 									exit
 									;;
 									HW_Reboot)
 									echo "The devices will do an Hardware reboot"
 									IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
 									curl -X POST -d '{"mode":"Hardware"}' http://${IP}:65000/jps/api/command/reboot --header "Content-Type:application/json"
+									echo -e "\n"
 									;;
 									SW_Reboot)
 									echo "The device will do a Software reboot"
 									IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
 									curl -X POST -d '{"mode":"Software"}' http://${IP}:65000/jps/api/command/reboot --header "Content-Type:application/json"
+									echo -e "\n"
 									;;
 									Force_Auth)
 									echo "The device will authentincate again on JBL"
 									IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
 									curl -X GET http://${IP}:65000/jps/api/command/forceauth --header "Content-Type:application/json"
+									echo -e "\n"
 									;;
-			        					Open_Barrier)
+			        		Open_Barrier)
 									echo "The device will open the barrier"
 									IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
 									curl -X POST -d '{"type":"Transit","status":"Opened"}' http://${IP}:65000/jps/api/command/barrier --header "Content-Type:application/json"
+									echo -e "\n"
 									;;
-			        					Get_Status)
+			        		Get_Status)
 									echo "Getting device status..."
-                                					IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
+                  IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
 									curl -X GET http://${IP}:65000/jps/api/status --header "Content-Type:application/json"
-                                					;;
-			        					Set_in_Service)
+									echo -e "\n"
+                  ;;
+			        		Set_in_Service)
 									echo "Setting the device In Service..."
-                               	 					IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
+                  IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
 									curl -X POST -d '{"humtriggered": true,"mode":"InService"}' http://${IP}:65000/jps/api/command/setMode --header "Content-Type:application/json"
-			   					esac
+									echo -e "\n"
+									esac
 		   					done
 					;;
 
