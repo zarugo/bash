@@ -3,13 +3,24 @@ temp_dir=/cygdrive/c/ebb_temp
 conf_dir=/cygdrive/c/ebb_conf
 date=$(date +%F-%H-%M-%S)
 pc=$(hostname)
+ISCYG=$(uname -s)
 
 function GET_DEVICES () {
-	ips=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
-	for i in $ips
-	do 
-		echo "${i}"
-	done
+	case $ISCYG in
+		Linux*)
+		IPS=$(arp |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
+		for i in $IPS
+		do
+			echo "${i}"
+		done
+		;;
+		CYGWIN*)
+		IPS=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
+		for i in $IPS
+		do
+			echo "${i}"
+		done
+		;;
 }
 
 #create the temp dir if it does not exist
@@ -34,18 +45,18 @@ fi
 
 
  #get jbl config files
- 
+
 if [ -e /cygdrive/c/jbl/jbl-conf.json ] && [ -e /cygdrive/c/jbl/jbllog/log4j2.xml ]
 	then
 		cp /cygdrive/c/jbl/jbl-conf.json ${temp_dir}/jbl-conf_${pc}_${date}.json 2>/dev/null
 		cp /cygdrive/c/jbl/jbllog/log4j2.xml ${temp_dir}/log4j2_${pc}_${date}.xml 2>/dev/null
 	else
 		echo "No jbl log found!"
-		
+
 fi
- 
+
 #get periferhals config
- 
+
 for DEVICE in $(GET_DEVICES)
 	do
 	 	echo Getting config file from $DEVICE ....
@@ -67,7 +78,7 @@ for DEVICE in $(GET_DEVICES)
 					echo "Device type is unknown..."
 					exit 1
 					;;
-					
+
 		esac
 	done
 
@@ -75,5 +86,3 @@ for DEVICE in $(GET_DEVICES)
 tar cfz $temp_dir/${pc}_${date}_conf.tar.gz $temp_dir/* --remove-files 2>/dev/null 1>&2
 mv $temp_dir/* $conf_dir
 echo "All done, the config files are inside the C:\ebb_conf directory"
-
-
