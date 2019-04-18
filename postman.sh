@@ -19,6 +19,7 @@ function GET_DEVICES () {
 			TYPE=$(ssh -o "StrictHostKeyChecking no" root@${i} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 			echo "${TYPE}_${i}"
 		done
+		;;
 }
 if [ $# -lt 1 ]
 then

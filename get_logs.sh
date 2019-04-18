@@ -4,13 +4,24 @@ BACKUP_DIR=/cygdrive/c/ebb_weekly_logs
 BACKUP_DATE=$(date +%F-%H-%M-%S)
 BACKUP_FILE="${BACKUP_DATE}.tar.gz"
 PC=$(hostname)
+ISCYG=$(uname -s)
 
 function GET_DEVICES () {
-	IPS=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
-	for i in $IPS
-	do 
-		echo "${i}"
-	done
+	case $ISCYG in
+		Linux*)
+		IPS=$(arp |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
+		for i in $IPS
+		do
+			echo "${i}"
+		done
+		;;
+		CYGWIN*)
+		IPS=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
+		for i in $IPS
+		do
+			echo "${i}"
+		done
+		;;
 }
 
 
@@ -25,7 +36,7 @@ if [ ! -d "$TEMP_DIR" ]
 fi
 #create the bck dir if it does not exist
 
-if [ ! -d "$BACKUP_DIR" ] 
+if [ ! -d "$BACKUP_DIR" ]
 	then
   		mkdir -p $BACKUP_DIR
   		chmod 777 $BACKUP_DIR
@@ -41,9 +52,9 @@ if [ $# -lt 1  ]
 fi
 
 #get the log files, save some space and rename files
- 
+
 if [ $1 = jbl ]
-	then 
+	then
 		echo Getting Jbl log files....
 		find /cygdrive/c/jbl/jbllog -mtime -7 -print |xargs cp -p -t ${TEMP_DIR} 2>/dev/null 1>&2
 		tar cfz $TEMP_DIR/${PC}_jbl_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
@@ -78,7 +89,6 @@ elif [ $1 = all ]
 fi
 
 if [ $? = 0 ]
-	then	
+	then
  		echo 'All done, your log files are inside the C:\ebb_weekly_logs\ directory,use them wisely!'
 fi
-
