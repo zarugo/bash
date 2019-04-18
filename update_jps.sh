@@ -175,7 +175,10 @@ chown -R root:root JPSApps
 
 
 #restore
-mkdir -p $JSDIR
+if ! [ -d $JSDIR ]
+  then
+    mkdir -p $JSDIR
+fi
 mv ./ConfigData_merged.json $JSDIR/ConfigData.json
 if [ $? != 0 ]
 	then
@@ -183,8 +186,10 @@ if [ $? != 0 ]
 	ConfigData.json has not been restored. Please contact HUB Support!'
 	exit 1
 fi
-
-mkdir -p $TOKENDIR
+if ! [ -d $TOKENDIR ]
+  then
+    mkdir -p $TOKENDIR
+  fi
 mv ./AppDB.fdb $TOKEN
 if [ $? != 0 ]
 	then
@@ -195,10 +200,12 @@ fi
 #restore cash only for APS
 if [ -f ./cashDB.fdb ]
 	then
-  mkdir -p $CASHDIR
+    if ! [ -d $CASHDIR ]
+    then
+      mkdir -p $CASHDIR
+    fi
 	mv ./cashDB.fdb $CASH
 fi
-
 if [ $? != 0 ]
 	then
 	echo 'CRITICAL ERROR!! \
