@@ -31,9 +31,9 @@ then
 	exit 1
 fi
 
-if ! [ -d ./JPSApps ]
+if ! [ -d ./JPSApps_aps ] || [ -d ./JPSApps_le ] || [ -d ./JPSApps_lx ]
 then
-    echo -e "\nERROR! \nThe update package has not been found, make sure that you have 'JPSApps' in this same folder\n"
+    echo -e "\nERROR! \nThe update package has not been found, make sure that you have 'JPSApps_xxx' in this same folder\n"
     exit 1
 fi
 
@@ -41,21 +41,25 @@ get_config () {
 	TYPE=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 	case $TYPE in
 		AppAps)
-				scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
-				;;
+    cp JPSApps_aps JPSApps
+		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+		;;
 		AppLe)
-				scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
-				;;
+    cp JPSApps_le JPSApps
+		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+		;;
 		AppLx)
-				scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
-				;;
+    cp JPSApps_lx JPSApps
+		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+		;;
 		AppApl)
-				scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
-				;;
+    cp JPSApps_lx JPSApps
+		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+		;;
 		     *)
-				echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
-				exit 1
-				;;
+		echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
+		exit 1
+		;;
 
 esac
 }
@@ -210,7 +214,7 @@ tar -cfz JPSApps.tar.gz JPSApps
 scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json root@$DEVICE:/home/root/
 
 #clean
-rm ConfigData_ORIG.json ConfigData_merged.json _update.sh JPSApps.tar.gz
+rm -rf ConfigData_ORIG.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
 
 #execute the remote script
 ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
