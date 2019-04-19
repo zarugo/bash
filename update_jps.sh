@@ -41,18 +41,22 @@ function get_config () {
 	TYPE=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 	case $TYPE in
 		AppAps)
+    cp ./JPSApps_aps/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json ./ConfigData_NEW.json
     cp -r JPSApps_aps JPSApps
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppLe)
+    cp ./JPSApps_le/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json ./ConfigData_NEW.json
     cp -r JPSApps_le JPSApps
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppLx)
+    cp ./JPSApps_apl/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
     cp -r JPSApps_apl JPSApps
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppApl)
+    cp ./JPSApps_apl/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
     cp -r JPSApps_apl JPSApps
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
@@ -69,6 +73,7 @@ get_config
 #######################################
 #MERGE JSON FILE
 #######################################
+java -jar JpsMergeTool-EBBS-657.jar ./ConfigData_ORIG.json ./ConfigData_NEW.json ./ConfigData_merged.json
 
 #Create the remote update script
 cat << 'EOF' > _update.sh
@@ -234,7 +239,7 @@ fi
 
 #clean
 echo "Cleaning temp files..."
-rm -rf ConfigData_ORIG.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
+rm -rf ConfigData_ORIG.json ConfigData_NEW.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
 
 #reboot the device
 echo -e "Rebooting..."
