@@ -217,12 +217,14 @@ sync
 EOF
 chmod +x _update.sh
 #zip the package
+echo "Creating the update package file..."
 tar -zcf JPSApps.tar.gz JPSApps
 
 #copy the package, remote script and ConfigData.json
 scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json root@$DEVICE:/home/root/
 
 #execute the remote script
+echo "Updating device..."
 ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
 if [ $? != 0 ]
 then
@@ -231,6 +233,7 @@ then
 fi
 
 #clean
+echo "Cleaning temp files..."
 rm -rf ConfigData_ORIG.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
 
 #reboot the device
