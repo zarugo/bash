@@ -2,7 +2,7 @@
 #set -x
 ISCYG=$(uname -s)
 
-function GET_DEVICES () {
+GET_DEVICES(){
 	case $ISCYG in
 		Linux*)
 		IPS=$(arp |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
@@ -20,6 +20,7 @@ function GET_DEVICES () {
 			echo "${TYPE}_${i}"
 		done
 		;;
+	esac
 }
 if [ $# -lt 1 ]
 then

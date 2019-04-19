@@ -21,6 +21,7 @@ function GET_DEVICES () {
 			echo "${i}"
 		done
 		;;
+	esac
 }
 
 #create the temp dir if it does not exist
