@@ -211,6 +211,8 @@ if [ $? != 0 ]
 	echo 'CRITICAL ERROR!! \
 	Cash DB has not been restored. Please contact HUB Support!'
 fi
+#clean
+rm -rf _update.sh JPSApps.tar.gz
 sync
 EOF
 chmod +x _update.sh
