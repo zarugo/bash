@@ -31,7 +31,7 @@ then
 	exit 1
 fi
 
-if ! [ -d ./JPSApps_aps ] || [ -d ./JPSApps_le ] || [ -d ./JPSApps_lx ]
+if ! [ -d ./JPSApps_aps ] || [ -d ./JPSApps_le ] || [ -d ./JPSApps_apl ]
 then
     echo -e "\nERROR! \nThe update package has not been found, make sure that you have 'JPSApps_xxx' in this same folder\n"
     exit 1
@@ -49,11 +49,11 @@ function get_config () {
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppLx)
-    cp JPSApps_lx JPSApps
+    cp JPSApps_apl JPSApps
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppApl)
-    cp JPSApps_lx JPSApps
+    cp JPSApps_apl JPSApps
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		     *)
