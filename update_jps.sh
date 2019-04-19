@@ -220,6 +220,12 @@ tar -zcf JPSApps.tar.gz JPSApps
 #copy the package, remote script and ConfigData.json
 scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json root@$DEVICE:/home/root/
 
+#execute the remote script
+ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
+if [ $? != 0 ] then
+  echo "The update crashed unexpectedly, please contact HUB support"
+  exit 1
+fi
 #clean
 rm -rf ConfigData_ORIG.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
 
