@@ -96,7 +96,7 @@ fi
 #double check that we have the package
 if ! [ -f ./JPSApps.tar.gz ]
 	then
-	echo 'No JPSApps.tar.gz package found for update '
+	echo 'REMOTE: No JPSApps.tar.gz package found for update '
 	exit 1
 fi
 
@@ -130,6 +130,10 @@ case $TYPE in
 	exit 1
 	;;
 esac
+function rollback () {
+  rm -fr JPSApps
+  mv JPSApps_old JPSApps
+}
 
 #kill everything
 pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
@@ -140,7 +144,7 @@ cp $TOKEN .
 #check token backup
 if [ $? != 0 ]
 	then
-	echo 'Token has not been saved, aborting update. Please contact HUB Support!'
+	echo 'REMOTE: Token has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
 
@@ -151,7 +155,7 @@ fi
 #check cash DB backup
 if [ $? != 0 ]
 	then
-	echo 'Cash DB has not been saved, aborting update. Please contact HUB Support!'
+	echo 'REMOTE: Cash DB has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
 
@@ -163,7 +167,7 @@ mv ./JPSApps ./JPSApps_old
 #Check backup
 if [ $? != 0 ]
 	then
-	echo 'Application folder has not been saved, aborting update. Please contact HUB Support!'
+	echo 'REMOTE: Application folder has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
 
@@ -172,7 +176,8 @@ tar -xf JPSApps.tar.gz
 #check untar
 if [ $? != 0 ]
 	then
-	echo 'Packet file could not be unzipped, aborting update. Please contact HUB Support!'
+	echo 'REMOTE: Packet file could not be unzipped, aborting update. Please contact HUB Support!'
+  rollback
 	exit 1
 fi
 chmod +x -R JPSApps
@@ -187,9 +192,10 @@ fi
 mv ./ConfigData_merged.json $JSDIR/ConfigData.json
 if [ $? != 0 ]
 	then
-	echo 'CRITICAL ERROR!! \
+	echo 'REMOTE CRITICAL ERROR!! \
 	ConfigData.json has not been restored. Please contact HUB Support!'
-	exit 1
+  rollback
+	exit 3
 fi
 if ! [ -d $TOKENDIR ]
   then
@@ -198,9 +204,10 @@ if ! [ -d $TOKENDIR ]
 mv ./AppDB.fdb $TOKEN
 if [ $? != 0 ]
 	then
-	echo 'CRITICAL ERROR!! \
+	echo 'REMOTE CRITICAL ERROR!! \
 	JBL Token and Cash DB have not been restored. Please contact HUB Support!'
-	exit 1
+  rollback
+	exit 3
 fi
 #restore cash only for APS
 if [ -f ./cashDB.fdb ]
@@ -213,8 +220,10 @@ if [ -f ./cashDB.fdb ]
 fi
 if [ $? != 0 ]
 	then
-	echo 'CRITICAL ERROR!! \
+	echo 'REMOTE CRITICAL ERROR!! \
 	Cash DB has not been restored. Please contact HUB Support!'
+  rollback
+  exit 3
 fi
 #clean
 rm -rf _update.sh JPSApps.tar.gz
@@ -231,10 +240,16 @@ scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged
 #execute the remote script
 echo "Updating device..."
 ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
-if [ $? != 0 ]
+if [ $? = 1 ]
 then
-  echo "The update crashed unexpectedly, please contact HUB support"
+  echo "The backup of old data was unsuccessful, please contact HUB support"
+  ssh -o "StrictHostKeyChecking no" root@$DEVICE "reboot"
   exit 1
+elif [ $? = 3 ]
+then
+  echo "The restore of the data on the new app was unsuccessful, please contact HUB support. \
+  The device has been rolled back to the previous version"
+  ssh -o "StrictHostKeyChecking no" root@$DEVICE "reboot"
 fi
 
 #clean
