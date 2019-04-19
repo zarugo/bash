@@ -71,11 +71,11 @@ get_config
 #######################################
 
 #Create the remote update script
-cat << EOF > _update.sh
+cat << 'EOF' > _update.sh
 #!/bin/bash
 #set -x
 WORKDIR=/home/root
-TYPE=$('ps' | 'grep' [J]PSApplication | 'awk' '{print $6}')
+TYPE=$(ps | grep [J]PSApplication | awk '{print $6}')
 
 # clean_scripts(){
 # 	rm /home/root/JPSApps/JPSApplication/*AppRun.sh
@@ -83,9 +83,9 @@ TYPE=$('ps' | 'grep' [J]PSApplication | 'awk' '{print $6}')
 # }
 
 #double check we are in the correct directory
-if [ $('pwd') != \$WORKDIR ]
+if [ $(pwd) != \$WORKDIR ]
 	then
-	cd \$WORKDIR
+	cd $WORKDIR
 fi
 
 #double check that we have the package
@@ -96,7 +96,7 @@ if ! [ -f ./JPSApps.tar.gz ]
 fi
 
 #who am I?
-case \$TYPE in
+case $TYPE in
 	AppAps)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/ApsApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/ApsApp
@@ -131,20 +131,20 @@ pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
 sleep 1
 
 #backup the JBL Token and Cash
-cp \$TOKEN .
+cp $TOKEN .
 #check token backup
-if [ \$? != 0 ]
+if [ $? != 0 ]
 	then
 	echo 'Token has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
 
-if [ \$TYPE = AppAps ]
+if [ $TYPE = AppAps ]
 	then
-	cp \$CASH .
+	cp $CASH .
 fi
 #check cash DB backup
-if [ \$? != 0 ]
+if [ $? != 0 ]
 	then
 	echo 'Cash DB has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
@@ -156,7 +156,7 @@ ls | grep -e [JPSApps]_ | xargs rm -fr
 #backup
 mv ./JPSApps ./JPSApps_old
 #Check backup
-if [ \$? != 0 ]
+if [ $? != 0 ]
 	then
 	echo 'Application folder has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
@@ -165,7 +165,7 @@ fi
 #untar the new package
 tar -xf JPSApps.tar.gz
 #check untar
-if [ \$? != 0 ]
+if [ $? != 0 ]
 	then
 	echo 'Packet file could not be unzipped, aborting update. Please contact HUB Support!'
 	exit 1
@@ -175,23 +175,23 @@ chown -R root:root JPSApps
 
 
 #restore
-if ! [ -d \$JSDIR ]
+if ! [ -d $JSDIR ]
   then
-    mkdir -p \$JSDIR
+    mkdir -p $JSDIR
 fi
-mv ./ConfigData_merged.json \$JSDIR/ConfigData.json
-if [ \$? != 0 ]
+mv ./ConfigData_merged.json $JSDIR/ConfigData.json
+if [ $? != 0 ]
 	then
 	echo 'CRITICAL ERROR!! \
 	ConfigData.json has not been restored. Please contact HUB Support!'
 	exit 1
 fi
-if ! [ -d \$TOKENDIR ]
+if ! [ -d $TOKENDIR ]
   then
-    mkdir -p \$TOKENDIR
+    mkdir -p $TOKENDIR
   fi
-mv ./AppDB.fdb \$TOKEN
-if [ \$? != 0 ]
+mv ./AppDB.fdb $TOKEN
+if [ $? != 0 ]
 	then
 	echo 'CRITICAL ERROR!! \
 	JBL Token and Cash DB have not been restored. Please contact HUB Support!'
@@ -200,13 +200,13 @@ fi
 #restore cash only for APS
 if [ -f ./cashDB.fdb ]
 	then
-    if ! [ -d \$CASHDIR ]
+    if ! [ -d $CASHDIR ]
     then
-      mkdir -p \$CASHDIR
+      mkdir -p $CASHDIR
     fi
-	mv ./cashDB.fdb \$CASH
+	mv ./cashDB.fdb $CASH
 fi
-if [ \$? != 0 ]
+if [ $? != 0 ]
 	then
 	echo 'CRITICAL ERROR!! \
 	Cash DB has not been restored. Please contact HUB Support!'
