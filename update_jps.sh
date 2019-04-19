@@ -231,9 +231,6 @@ fi
 #clean
 rm -rf ConfigData_ORIG.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
 
-#execute the remote script
-ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
-
 #reboot the device
 echo -e "Rebooting..."
-ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
+ssh -o "StrictHostKeyChecking no" root@$DEVICE "reboot"
