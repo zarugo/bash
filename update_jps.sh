@@ -75,7 +75,7 @@ cat << EOF > _update.sh
 #!/bin/bash
 #set -x
 WORKDIR=/home/root
-TYPE=$(ps | grep [J]PSApplication | awk '{print $6}')
+TYPE=$('ps' | 'grep' [J]PSApplication | 'awk' '{print $6}')
 
 # clean_scripts(){
 # 	rm /home/root/JPSApps/JPSApplication/*AppRun.sh
@@ -83,7 +83,7 @@ TYPE=$(ps | grep [J]PSApplication | awk '{print $6}')
 # }
 
 #double check we are in the correct directory
-if [ $(pwd) != \$WORKDIR ]
+if [ $('pwd') != \$WORKDIR ]
 	then
 	cd \$WORKDIR
 fi
