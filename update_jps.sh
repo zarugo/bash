@@ -31,9 +31,9 @@ then
 	exit 1
 fi
 
-if ! [[ -d JPSApps_aps || -d ./JPSApps_le || -d ./JPSApps_apl ]]
+if ! [[ -d JPSApps_new ]]
 then
-    echo -e "\nERROR! \nThe update package has not been found, make sure that you have 'JPSApps_xxx' in this same folder\n"
+    echo -e "\nERROR! \nThe update package has not been found, make sure that you have 'JPSApps_new' in this same folder\n"
     exit 1
 fi
 
@@ -41,23 +41,43 @@ function get_config () {
 	TYPE=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 	case $TYPE in
 		AppAps)
-    cp ./JPSApps_aps/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json ./ConfigData_NEW.json
-    cp -r JPSApps_aps JPSApps
+    cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json ./ConfigData_NEW.json
+    cp -r JPSApps_new JPSApps
+    rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
+    rm -r ./JPSApps/JPSApplication/Resources/AplApp ./JPSApps/JPSApplication/Resources/LeApp
+    rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
+	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json_*
+	cp ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppLe)
-    cp ./JPSApps_le/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json ./ConfigData_NEW.json
-    cp -r JPSApps_le JPSApps
+    cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json ./ConfigData_NEW.json
+    cp -r JPSApps_new JPSApps
+	rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
+    rm -r ./JPSApps/JPSApplication/Resources/AplApp ./JPSApps/JPSApplication/Resources/ApsApp
+    rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp
+	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json_*
+	cp ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppLx)
-    cp ./JPSApps_apl/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
-    cp -r JPSApps_apl JPSApps
+    cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
+    cp -r JPSApps_new JPSApps
+	rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
+    rm -r ./JPSApps/JPSApplication/Resources/ApsApp ./JPSApps/JPSApplication/Resources/LeApp
+    rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
+	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json_*
+	cp ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppApl)
-    cp ./JPSApps_apl/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
-    cp -r JPSApps_apl JPSApps
+    cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
+    cp -r JPSApps_new JPSApps
+	rm ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
+    rm -r ./JPSApps/JPSApplication/Resources/ApsApp ./JPSApps/JPSApplication/Resources/LeApp
+    rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
+	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json_*
+	cp ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		     *)
@@ -70,10 +90,13 @@ esac
 
 echo "Saving current config file..."
 get_config
+
+read -n1 -r -p "Press any key to continue..." key
 #######################################
 #MERGE JSON FILE
 #######################################
-java -jar JpsMergeTool-EBBS-657.jar ./ConfigData_ORIG.json ./ConfigData_NEW.json ./ConfigData_merged.json
+java -jar JpsMergeTool*.jar ./ConfigData_ORIG.json ./ConfigData_NEW.json ./ConfigData_merged.json
+read -n1 -r -p "Press any key to continue..." key
 
 #Create the remote update script
 cat << 'EOF' > _update.sh
