@@ -53,7 +53,7 @@ function get_config () {
 		AppLe)
     cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json ./ConfigData_NEW.json
     cp -r JPSApps_new JPSApps
-	rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
+	  rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
     rm -r ./JPSApps/JPSApplication/Resources/AplApp ./JPSApps/JPSApplication/Resources/ApsApp
     rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp
 	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json_*
