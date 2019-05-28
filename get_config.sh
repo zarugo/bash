@@ -96,4 +96,4 @@ for DEVICE in $(GET_DEVICES)
 #create a single archive
 tar cfz $temp_dir/${pc}_${date}_conf.tar.gz $temp_dir/* --remove-files 2>/dev/null 1>&2
 mv $temp_dir/* $conf_dir
-echo "All done, the config files are inside the C:\ebb_conf directory"
+echo 'All done, the config files are inside the "ebb_conf" directory'
