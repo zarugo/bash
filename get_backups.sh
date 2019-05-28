@@ -54,6 +54,8 @@ if [ ! -d "$BACKUP_DIR" ]
   		echo Creating Backup dir...
 fi
 
+#delete backups files older than 60 days
+find $BACKUP_DIR/* -mtime +60 -exec rm -fr {} \;
 
 #check argument
 if [ $# -lt 1  ]
