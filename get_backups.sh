@@ -1,4 +1,5 @@
 #!/bin/bash
+#set -x
 TEMP_DIR=/cygdrive/c/ebb_temp
 BACKUP_DIR=/cygdrive/c/ebb_configurations_backup
 BACKUP_DATE=$(date +%F-%H-%M-%S)
