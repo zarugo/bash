@@ -5,6 +5,16 @@ date=$(date +%F-%H-%M-%S)
 pc=$(hostname)
 ISCYG=$(uname -s)
 
+if [ $ISCYG = "Linux" ]
+	then
+	temp_dir=~/ebb_temp
+	conf_dir=~/ebb_conf
+elif [ $ISCYG = "CYGWIN" ]
+	then
+		temp_dir=/cygdrive/c/ebb_temp
+		conf_dir=/cygdrive/c/ebb_conf
+	fi
+
 function GET_DEVICES () {
 	case $ISCYG in
 		Linux*)
