@@ -92,5 +92,5 @@ fi
 
 if [ $? = 0 ]
 	then
- 		echo 'All done, your JPSApps backup files are inside the C:\ebb_configurations_backup\ directory.'
+ 		echo 'All done, your JPSApps backup files are inside the "ebb_configurations_backup" directory.'
 fi
