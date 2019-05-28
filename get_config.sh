@@ -18,7 +18,7 @@ elif [ $ISCYG = "CYGWIN" ]
 function GET_DEVICES () {
 	case $ISCYG in
 		Linux*)
-		IPS=$(arp |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
+		IPS=$(ip neigh |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
 		for i in $IPS
 		do
 			echo "${i}"

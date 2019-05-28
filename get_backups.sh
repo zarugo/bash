@@ -6,10 +6,20 @@ BACKUP_FILE="${BACKUP_DATE}.tar.gz"
 PC=$(hostname)
 ISCYG=$(uname -s)
 
+if [ $ISCYG = "Linux" ]
+	then
+	TEMP_DIR=~/ebb_temp
+	BACKUP_DIR=~/ebb_configurations_backup
+elif [ $ISCYG = "CYGWIN" ]
+	then
+		TEMP_DIR=/cygdrive/c/ebb_temp
+		BACKUP_DIR=/cygdrive/c/ebb_configurations_backup
+	fi
+
 function GET_DEVICES () {
 	case $ISCYG in
 		Linux*)
-		IPS=$(arp |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
+		IPS=$(ip neigh |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
 		for i in $IPS
 		do
 			echo "${i}"

@@ -5,7 +5,7 @@ ISCYG=$(uname -s)
 GET_DEVICES(){
 	case $ISCYG in
 		Linux*)
-		IPS=$(arp |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
+		IPS=$(ip neigh |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
 		for i in $IPS
 		do
 			TYPE=$(ssh -o "StrictHostKeyChecking no" root@${i} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
