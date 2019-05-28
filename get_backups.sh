@@ -22,6 +22,7 @@ function GET_DEVICES () {
 			echo "${i}"
 		done
 		;;
+	esac
 }
 
 
