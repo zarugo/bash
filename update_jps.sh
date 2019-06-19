@@ -37,6 +37,18 @@ then
     exit 1
 fi
 
+#######################################
+#CHECK IF IT'S AN ONLINE VALIDATOR
+#######################################
+OV=$(curl -s http://$DEVICE:65000/jps/api/status | jq .perType)
+if [[ $OV = "AppOv" ]]
+then 
+	if 
+
+
+
+
+
 function get_config () {
 	TYPE=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 	case $TYPE in
