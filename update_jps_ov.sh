@@ -37,22 +37,16 @@ then
     exit 1
 fi
 
-#######################################
-#CHECK IF IT'S AN ONLINE VALIDATOR
-#######################################
-OV=$(curl -s http://$DEVICE:65000/jps/api/status | jq .perType)
-if [[ $OV = "AppOv" ]]
-then 
-	if 
-
-
-
-
 
 function get_config () {
-	TYPE=$(curl -s http://$DEVICE:65000/jps/api/status | jq .perType)
+	TYPE=$(curl -s -m 10 http://$DEVICE:65000/jps/api/status)
+	if [[ $? -eq 28 ]]
+	then
+	echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
+	exit 1
+	fi
 	case $TYPE in
-		"AppAps")
+		*AppAps*)
 		cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json ./ConfigData_NEW.json
 		cp -r JPSApps_new JPSApps
 		rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
@@ -62,7 +56,7 @@ function get_config () {
 		cp ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
-		"AppLe")
+		*AppLe*)
 		cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json ./ConfigData_NEW.json
 		cp -r JPSApps_new JPSApps
 		rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
@@ -72,7 +66,7 @@ function get_config () {
 		cp ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
-		"AppLx")
+		*AppLx*)
 		cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
 		cp -r JPSApps_new JPSApps
 		rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
@@ -82,7 +76,7 @@ function get_config () {
 		cp ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
-		"AppApl")
+		*AppApl*)
 		cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
 		cp -r JPSApps_new JPSApps
 		rm ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
@@ -92,7 +86,7 @@ function get_config () {
 		cp ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
-		"AppOv")
+		*AppOv*)
 		if ! [[ -e ~/.ssh/id_rsa.pub ]]
 		then
 			cat /dev/zero | ssh-keygen -q -N "" &>/dev/null
@@ -106,7 +100,7 @@ function get_config () {
 		rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json_*
 		cp ./JPSApps/JPSApplication/OvAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p pi@$DEVICE:/home/pi/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
-
+		;;
 		     *)
 		echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
 		exit 1
