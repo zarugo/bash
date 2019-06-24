@@ -286,6 +286,7 @@ scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged
 if [ $? != 0 ]
 then
   echo -e "\nUpdate files cannot be transfered on the device, please contact HUB SUpport"
+  exit 1
 fi
 
 #execute the remote script
