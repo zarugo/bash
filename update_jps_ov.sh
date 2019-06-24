@@ -112,12 +112,12 @@ esac
 echo "Saving current config file..."
 get_config
 
-read -n1 -r -p "Press any key to continue..." key
+#read -n1 -r -p "Press any key to continue..." key
 #######################################
 #MERGE JSON FILE
 #######################################
 java -jar JpsMergeTool*.jar ./ConfigData_ORIG.json ./ConfigData_NEW.json ./ConfigData_merged.json
-read -n1 -r -p "Press any key to continue..." key
+#read -n1 -r -p "Press any key to continue..." key
 
 #Create the remote update script
 if [[ $TYPE != "AppOv" ]]
@@ -127,7 +127,12 @@ cat << 'EOF' > _update.sh
 #!/bin/bash
 #set -x
 WORKDIR=/home/root
-TYPE=$(ps | grep [J]PSApplication | awk '{print $6}')
+TYPE=$(curl -s -m 10 http://127.0.0.1:65000/jps/api/status)
+if [[ $? -eq 28 ]]
+then
+echo -e "\nREMOTE: Device type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
+exit 1
+fi
 
 #double check we are in the correct directory
 if [ $(pwd) != \$WORKDIR ]
@@ -144,7 +149,7 @@ fi
 
 #who am I?
 case $TYPE in
-	AppAps)
+	*AppAps*)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/ApsApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/ApsApp
 	CASH=/home/root/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb
@@ -152,23 +157,23 @@ case $TYPE in
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp
 	#TARIFF=/mnt/sd/AslApp/TarDB.xml
 	;;
-	AppLx)
+	*AppLx*)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/AplApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/AplApp
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp
 	;;
-	AppLe)
+	*AppLe*)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/LeApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/LeApp
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
 	;;
-	AppApl)
+	*AppApl*)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/AplApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/AplApp
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp
 	;;
 	*)
-	echo 'Application type not recognized, is the JPS Application is running?'
+	echo 'REMOTE: Application type not recognized, is the JPS Application is running?'
 	exit 1
 	;;
 esac
@@ -190,7 +195,7 @@ if [ $? != 0 ]
 	exit 1
 fi
 
-if [ $TYPE = AppAps ]
+if [[ $TYPE =~ .*AppAps.* ]]
 	then
 	cp $CASH .
 fi
@@ -301,7 +306,6 @@ cat << 'EOF' > _update.sh
 #!/bin/bash
 #set -x
 WORKDIR=/home/pi
-TYPE=$(ps fax | grep [J]PSApplication | awk '{print $6}')
 
 #double check we are in the correct directory
 if [ $(pwd) != \$WORKDIR ]
@@ -423,5 +427,3 @@ fi
 #clean
 echo "Cleaning temp files..."
 rm -rf ConfigData_ORIG.json ConfigData_NEW.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
-
-
