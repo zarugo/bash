@@ -43,8 +43,8 @@ fi
 #######################################
 OV=$(curl -s http://$DEVICE:65000/jps/api/status | jq .perType)
 if [[ $OV = "AppOv" ]]
-then 
-	if 
+then
+	if
 
 
 

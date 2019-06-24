@@ -46,17 +46,17 @@ x=${1%%$3*}
 echo $(($2 + (${#x}/4) ))
 }
 #######################################################################################
-#show the REAL (not from config file, that could not be applied yet) ip from "ip" 
+#show the REAL (not from config file, that could not be applied yet) ip from "ip"
 #command. We do not use ifconfig since it's basically deprecated in Linux
 #######################################################################################
 show_current_info(){
       if (whiptail --backtitle "JBL Network Setup" --title "Current Setting" \
                 --yesno "\n\n IP Address:          $IPADDR \n\n Subnet mask:       $(cdr2mask $MASK) \n\n Default gateway:    $GW\n\n\n Do you want to change the network settings?" \
                 --defaultno  $HEIGHT $WIDTH 3>&1 1>&2 2>&3)
-        then 
+        then
 	   ip_sub_menu
-       fi	 	    
-       
+       fi
+
 }
 #######################################################################################
 #we use sed with regex to find and change values
@@ -74,7 +74,7 @@ sed -i -r "s:^static domain_name_servers=$ip4_set\b:static domain_name_servers=$
 #network ip collection from the user
 #######################################################################################
 ip_sub_menu(){
-while [ -z $result ] || [ $result == "1" ]; 
+while [ -z $result ] || [ $result == "1" ];
      do
 
         while [[ -z $ip_result ]] || [[ "$ip_result" == "1" ]] ; do
@@ -111,25 +111,25 @@ while [ -z $result ] || [ $result == "1" ];
         done
         whiptail --backtitle "JBL Network Setup" --title "Are the settings correct?" --yesno "\n IP Adress: $ipaddr \n Netmask: $netmask \n Gateway: $gateway \n DNS: $dns1 \n" $HEIGHT $WIDTH 3>&1 1>&2 2>&3
 	result=$?
-#reset the loops in case we want to go back and assign a different network config in the same session	
+#reset the loops in case we want to go back and assign a different network config in the same session
 	ip_result="1"
     sm_result="1"
     gw_result="1"
     dns_result="1"
     done
 	result="1"
-    set_ip 
+    set_ip
     #Check if the file is written, usually fails for missing root permission
 	if ! [[ $? = "0" ]]
 	then
 		whiptail --backtitle "JBL Network Setup" --title "ERROR!" --msgbox "Settings are NOT written to /etc/network/interfaces and/etc/resolv.conf, be sure that you are root!" $HEIGHT $WIDTH
 	else
 		whiptail --backtitle "JBL Network Setup" --title "OK!" --msgbox "New settings are written to config file, please reboot to apply" $HEIGHT $WIDTH
-				
+
     fi
 
 }
-    
+
 #######################################################################################
 #Main menu
 #######################################################################################
@@ -165,9 +165,3 @@ case $CHOICE in
     ;;
 esac
 done
-
-
-
-
-
-
