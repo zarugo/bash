@@ -283,6 +283,10 @@ tar -zcf JPSApps.tar.gz JPSApps
 
 #copy the package, remote script and ConfigData.json
 scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json root@$DEVICE:/home/root/
+if [ $? != 0 ]
+then
+  echo -e "\nUpdate files cannot be transfered on the device, please contact HUB SUpport"
+fi
 
 #execute the remote script
 echo "Updating device..."
