@@ -426,7 +426,7 @@ then
 fi
 #reboot the device
 echo -e "Rebooting..."
-ssh -o "StrictHostKeyChecking no" pi@$DEVICE "sudo reboot"
+ssh -o "StrictHostKeyChecking no" pi@$DEVICE "sudo reboot" ####if not working: sudo visudo and add "pi ALL=(ALL) NOPASSWD: /sbin/poweroff, /sbin/reboot, /sbin/shutdown"
 fi
 
 #clean
