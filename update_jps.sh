@@ -59,8 +59,8 @@ function get_config () {
     rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
     rm -r ./JPSApps/JPSApplication/Resources/AplApp ./JPSApps/JPSApplication/Resources/LeApp
     rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
-	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json_*
-	cp ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
+  	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json_*
+	  cp ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppLe)
@@ -69,28 +69,28 @@ function get_config () {
 	  rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
     rm -r ./JPSApps/JPSApplication/Resources/AplApp ./JPSApps/JPSApplication/Resources/ApsApp
     rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp
-	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json_*
-	cp ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
+	  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/ConfigData.json_*
+	  cp ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppLx)
     cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
     cp -r JPSApps_new JPSApps
-	rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
+	  rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
     rm -r ./JPSApps/JPSApplication/Resources/ApsApp ./JPSApps/JPSApplication/Resources/LeApp
     rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
-	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json_*
-	cp ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
+	  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json_*
+	  cp ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		AppApl)
     cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json ./ConfigData_NEW.json
     cp -r JPSApps_new JPSApps
-	rm ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
+	  rm ./JPSApps/JPSApplication/ApsAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/OvAppRun.sh
     rm -r ./JPSApps/JPSApplication/Resources/ApsApp ./JPSApps/JPSApplication/Resources/LeApp
     rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
-	rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json_*
-	cp ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
+	  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/ConfigData.json_*
+	  cp ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		     *)
