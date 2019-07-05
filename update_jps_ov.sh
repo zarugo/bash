@@ -180,6 +180,7 @@ esac
 function rollback () {
   rm -fr JPSApps
   mv JPSApps_old JPSApps
+  rm -rf _update.sh JPSApps.tar.gz
 }
 
 #kill everything
