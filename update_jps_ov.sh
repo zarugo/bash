@@ -178,9 +178,9 @@ case $TYPE in
 	;;
 esac
 function rollback () {
-  rm -fr JPSApps
+  rm -fr JPSApps 2>/dev/null 1>&2
   mv JPSApps_old JPSApps
-  rm -rf _update.sh JPSApps.tar.gz
+  rm -rf _update.sh JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
 }
 
 #kill everything
@@ -192,6 +192,7 @@ cp $TOKEN .
 #check token backup
 if [ $? != 0 ]
 	then
+  rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
 	echo 'REMOTE: Token has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
@@ -200,9 +201,10 @@ if [[ $TYPE =~ .*AppAps.* ]]
 	then
 	cp $CASH .
 fi
-#check cash DB backup
+#check and backup cash DB backup
 if [ $? != 0 ]
 	then
+  rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
 	echo 'REMOTE: Cash DB has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
@@ -215,6 +217,7 @@ mv ./JPSApps ./JPSApps_old
 #Check backup
 if [ $? != 0 ]
 	then
+  rm -rf _update.sh JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
 	echo 'REMOTE: Application folder has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
@@ -274,7 +277,7 @@ if [ $? != 0 ]
   exit 3
 fi
 #clean
-rm -rf _update.sh JPSApps.tar.gz
+rm -rf _update.sh JPSApps.tar.gz 2>/dev/null 1>&2
 sync
 EOF
 chmod +x _update.sh
@@ -286,6 +289,7 @@ tar -zcf JPSApps.tar.gz JPSApps
 scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json root@$DEVICE:/home/root/
 if [ $? != 0 ]
 then
+  rm -rf ConfigData_ORIG.json ConfigData_NEW.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps 2>/dev/null 1>&2
   echo -e "\nUpdate files cannot be transfered on the device, please contact HUB SUpport"
   exit 1
 fi
@@ -332,19 +336,21 @@ CASHDIR=/home/pi/JPSApps/JPSApplication/Resources/Cash
 JSDIR=/home/pi/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp
 
 function rollback () {
-  rm -fr JPSApps
+  rm -fr JPSApps 2>/dev/null 1>&2
   mv JPSApps_old JPSApps
+  rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
 }
 
 #kill everything
 pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
 sleep 1
 
-#backup the JBL Token and Cash
+#backup the JBL Token
 cp $TOKEN .
 #check token backup
 if [ $? != 0 ]
 	then
+  rm -rf _update.sh JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
 	echo 'REMOTE: Token has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
@@ -357,6 +363,7 @@ mv ./JPSApps ./JPSApps_old
 #Check backup
 if [ $? != 0 ]
 	then
+  rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
 	echo 'REMOTE: Application folder has not been saved, aborting update. Please contact HUB Support!'
 	exit 1
 fi
@@ -382,7 +389,7 @@ fi
 mv ./ConfigData_merged.json $JSDIR/ConfigData.json
 if [ $? != 0 ]
 	then
-	echo 'REMOTE CRITICAL ERROR!! \
+  echo 'REMOTE CRITICAL ERROR!! \
 	ConfigData.json has not been restored. Please contact HUB Support!'
   rollback
 	exit 3
