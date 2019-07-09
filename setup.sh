@@ -152,10 +152,10 @@ case $CHOICE in
         sudo dpkg-reconfigure tzdata
         #this was to skip the menu on login if the tz is set, but it's better to go
 		#inside it anyway
-		touch /home/pi/.firsttime
+		touch /home/hubparking/.firsttime
 	;;
 	JBL_Config)
-	    sudo nano /home/pi/jbl/jbl-conf.json
+	     nano /opt/HUB/jbl/jbl-conf.json
 	;;
     Reboot)
         sudo systemctl reboot
