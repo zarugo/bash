@@ -265,7 +265,6 @@ fi
 rm -rf _update.sh JPSApps.tar.gz
 sync
 EOF
-chmod +x _update.sh
 #zip the package
 echo "Creating the update package file..."
 tar -zcf JPSApps.tar.gz JPSApps
@@ -275,6 +274,7 @@ scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged
 
 #execute the remote script
 echo "Updating device..."
+ssh -o "StrictHostKeyChecking no" root@$DEVICE "chmod +x _update.sh"
 ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
 if [ $? = 1 ]
 then
