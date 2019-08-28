@@ -87,11 +87,12 @@ function get_config () {
 		scp -o "StrictHostKeyChecking no" -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		*AppOv*)
-		if ! [[ -e ~/.ssh/id_rsa.pub ]]
-		then
-			cat /dev/zero | ssh-keygen -q -N "" &>/dev/null
-        fi
-		ssh-copy-id -o "StrictHostKeyChecking no" pi@DEVICE &>/dev/null
+    TYPE="AppOv"
+		 if ! [[ -e ~/.ssh/id_rsa.pub ]]
+		  then
+			  cat /dev/zero | ssh-keygen -q -N "" &>/dev/null
+     fi
+		ssh-copy-id -o "StrictHostKeyChecking no" pi@$DEVICE &>/dev/null
 		cp ./JPSApps_new/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json ./ConfigData_NEW.json
 		cp -r JPSApps_new JPSApps
 		rm ./JPSApps/JPSApplication/AplAppRun.sh ./JPSApps/JPSApplication/LeAppRun.sh ./JPSApps/JPSApplication/LxAppRun.sh ./JPSApps/JPSApplication/ApsAppRun.sh
@@ -370,7 +371,7 @@ if [ $? != 0 ]
 fi
 
 #untar the new package
-tar -xf JPSApps.tar.gz
+tar -xf JPSApps.tar.gz &>/dev/null
 #check untar
 if [ $? != 0 ]
 	then
