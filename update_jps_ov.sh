@@ -98,7 +98,7 @@ function get_config () {
 		rm -r ./JPSApps/JPSApplication/Resources/AplApp ./JPSApps/JPSApplication/Resources/LeApp
 		rm -r ./JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp ./JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
 		rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ConfigData.json_*
-		cp ./JPSApps/JPSApplication/OvAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
+		#cp ./JPSApps/JPSApplication/OvAppRun.sh ./JPSApps/JPSApplication/XXXAppRun.sh
 		scp -o "StrictHostKeyChecking no" -p pi@$DEVICE:/home/pi/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 		;;
 		     *)
@@ -184,7 +184,7 @@ function rollback () {
 }
 
 #kill everything
-pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
+pgrep -f AppRun.sh | xargs kill && pgrep JPSApplication | xargs kill
 sleep 1
 
 #backup the JBL Token and Cash
@@ -343,7 +343,7 @@ function rollback () {
 }
 
 #kill everything
-pgrep -f AppRun.sh | xargs kill -9 && pgrep JPSApplication | xargs kill -9
+pgrep -f AppRun.sh | xargs sudo kill  && pgrep JPSApplication | xargs sudo kill
 sleep 1
 
 #backup the JBL Token
