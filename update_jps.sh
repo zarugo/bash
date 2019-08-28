@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/bin/bash
 DEVICE=$1
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
@@ -274,7 +273,7 @@ scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged
 
 #execute the remote script
 echo "Updating device..."
-ssh -o "StrictHostKeyChecking no" root@$DEVICE "chmod +x _update.sh"
+ssh -o "StrictHostKeyChecking no" root@$DEVICE "chmod +x /home/root/_update.sh"
 ssh -o "StrictHostKeyChecking no" root@$DEVICE "/home/root/_update.sh"
 if [ $? = 1 ]
 then
