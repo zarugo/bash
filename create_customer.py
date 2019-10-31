@@ -36,7 +36,7 @@ with open(input_file) as csvfile:
         for i in range(len(title)):
             csv_lines[title[i]] = line[title[i]]
         create_url = 'http://' + jms + ':8080/janus-integration/api/ext/customer/create'
-        headers = { 'Content-Type': 'application/json' , 'Janus-TP-Authorization': token }
+        headers = { 'Content-Type': 'application/json' , 'Accept': 'application/json', 'Janus-TP-Authorization': token }
         data = (json.dumps(csv_lines, sort_keys=False, indent=4, separators=(',',': '), ensure_ascii=False))
         try:
             r = requests.post(create_url, headers=headers, data=data, timeout=10.0)
