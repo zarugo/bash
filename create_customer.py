@@ -1,5 +1,12 @@
 #!/usr/bin/python3
-import os, sys, csv, json, requests
+# The csv file must be in the format
+# firstName,lastName
+# pippo,pluto
+
+import os, sys, csv, json, requests, datetime
+
+
+now = datetime.datetime.now()
 jms = input("Type the ip of JMS:  ")
 username = input("Type the username of the third party:  ")
 password = input("Type the password of the third party:  ")
@@ -40,13 +47,14 @@ with open(input_file) as csvfile:
         data = (json.dumps(csv_lines, sort_keys=False, indent=4, separators=(",",": "), ensure_ascii=False))
         try:
             r = requests.post(create_url, headers=headers, data=data, timeout=10.0)
+            with open("upload_results.log", "a") as log:
+                log.write( now.strftime("%Y-%m-%d %H:%M:%S") + "  Customer inserted: " + r.text + ' ' + "Response Code from JMS was: " + str(r.status_code) + "\n" )
+
 
             #print(r.status_code)
             #print(r.headers)
 
         except Exception as e:
             print("Soething went wrong, the error is " + str(e))
-        print("Customer inserted:" + data + '\n' + "Response Code from JMS was: " + str(r.status_code) + '\n')
 
-
-print("The upload is done, please check on JMS that the customers are there.")
+print("The upload is done, please check on JMS that the customers are there. The log file is upload_results.log.")
