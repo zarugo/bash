@@ -128,12 +128,7 @@ cat << 'EOF' > _update.sh
 #!/bin/bash
 #set -x
 WORKDIR=/home/root
-TYPE=$(curl -s -m 10 http://127.0.0.1:65000/jps/api/status)
-if [[ $? -eq 28 ]]
-then
-echo -e "\nREMOTE: Device type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
-exit 1
-fi
+TYPE=$(ps | grep [J]PSApplication | awk '{print $6}')
 
 #double check we are in the correct directory
 if [ $(pwd) != \$WORKDIR ]
@@ -150,7 +145,7 @@ fi
 
 #who am I?
 case $TYPE in
-	*AppAps*)
+	AppAps)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/ApsApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/ApsApp
 	CASH=/home/root/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb
@@ -158,17 +153,17 @@ case $TYPE in
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp
 	#TARIFF=/mnt/sd/AslApp/TarDB.xml
 	;;
-	*AppLx*)
+	AppLx)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/AplApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/AplApp
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp
 	;;
-	*AppLe*)
+	AppLe)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/LeApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/LeApp
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp
 	;;
-	*AppApl*)
+	AppApl)
 	TOKEN=/home/root/JPSApps/JPSApplication/Resources/AplApp/AppDB.fdb
   TOKENDIR=/home/root/JPSApps/JPSApplication/Resources/AplApp
   JSDIR=/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp
