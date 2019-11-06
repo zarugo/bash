@@ -1,0 +1,180 @@
+#usage help
+function usage() {
+    echo -e "\n   You must provide the IP address of the device you want to update as an argument"
+    echo -e "\n   Usage:\n   $0 [IP] \n"
+}
+#Get the application type and set global variables
+#about folders and hardware
+function get_type () {
+  TYPE=$(curl -s -m 10 http://$DEVICE:65000/jps/api/status)
+  if [[ $? -eq 28 ]]
+    then
+    echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
+    exit 1
+  fi
+  case $TYPE in
+    *AppAps*)
+    HW=jhw
+    LOGIN=root
+    TYPE=AppAps
+    APPFLD=ApsApp
+    WEBFLD=apsapp
+    SCRIPT=ApsAppRun
+    WORKDIR=/home/root
+    SUDO=""
+    ;;
+    *AppLe*)
+    HW=jhw
+    LOGIN=root
+    TYPE=AppLe
+    APPFLD=LeApp
+    WEBFLD=leapp
+    SCRIPT=LeAppRun
+    WORKDIR=/home/root
+    SUDO=""
+    ;;
+    *AppLx*)
+    HW=jhw
+    LOGIN=root
+    TYPE=AppLx
+    APPFLD=AplApp
+    WEBFLD=aplapp
+    SCRIPT=LxAppRun
+    WORKDIR=/home/root
+    SUDO=""
+    ;;
+    *AppApl*)
+    HW=jhw
+    LOGIN=root
+    TYPE=AppApl
+    APPFLD=AplApp
+    WEBFLD=aplapp
+    SCRIPT=AplAppRun
+    WORKDIR=/home/root
+    SUDO=""
+    ;;
+    *AppOv*)
+    HW=rpi
+    LOGIN=pi
+    TYPE=AppOv
+    APPFLD=ApsApp
+    WEBFLD=apsapp
+    SCRIPT=OvAppRun
+    WORKDIR=/home/pi
+    SUDO="sudo"
+    ;;
+    *AppDr*)
+    HW=rpi
+    LOGIN=pi
+    TYPE=AppDr
+    APPFLD=LeApp
+    WEBFLD=leapp
+    SCRIPT=DrAppRun
+    WORKDIR=/home/pi
+    SUDO="sudo"
+    ;;
+         *)
+    echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
+    exit 1
+    ;;
+esac
+}
+#get the JPS config files
+function get_config() {
+  cp ./JPSApps_$HW/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json ./ConfigData_NEW.json
+  cp -r JPSApps_$HW JPSApps
+  find ./JPSApps/JPSApplication/ -name "*AppRun.sh" ! -name "${SCRIPT}.sh" -delete
+  find ./JPSApps/JPSApplication/Resources -maxdepth 1 -type d -name "*App" ! -name "${APPFLD}" -exec rm -fr {} \; &>/dev/null
+  find ./JPSApps/JPSApplication/Resources/www/webcfgtool -type d -name "*app" ! -name "${WEBFLD}" -exec rm -fr {} \; &>/dev/null
+  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_*
+  cp ./JPSApps/JPSApplication/${SCRIPT}.sh ./JPSApps/JPSApplication/XXXAppRun.sh
+  ssh -o "StrictHostKeyChecking no" $LOGIN@$DEVICE "$SUDO chmod -R 777 $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}"
+  scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+}
+
+
+function update_script() {
+  #create a script to be executed remotely
+  cat << EOF > _update.sh
+  #!/bin/bash
+  #set -x
+  WORKDIR=$WORKDIR
+  HW=$HW
+
+  #double check we are in the correct directory
+  if [ \$(pwd) != \$WORKDIR ]
+  	then
+  	cd \$WORKDIR
+  fi
+  #double check that we have the package
+  if ! [ -f ./JPSApps.tar.gz ]
+  	then
+  	echo 'REMOTE: No JPSApps.tar.gz package found for update '
+  	exit 1
+  fi
+  TOKEN=\${WORKDIR}/JPSApps/JPSApplication/Resources/${APPFLD}/AppDB.fdb
+  TOKENDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/${APPFLD}
+  CASH=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb
+  CASHDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash
+  JSDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}
+
+  function rollback() {
+    rm -fr JPSApps 2>/dev/null 1>&2
+    mv JPSApps_old JPSApps
+    rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
+  }
+
+  #kill everything
+  pgrep -f AppRun.sh | xargs $SUDO kill  && pgrep JPSApplication | xargs $SUDO kill
+  sleep 1
+
+  #backup the JBL Token
+  cp \$TOKEN .
+
+  #remove old backups
+  ls | grep -e [JPSApps]_ | xargs $SUDO rm -fr
+
+
+  #backup
+  mv ./JPSApps ./JPSApps_old
+  #Check backup
+  if [ \$? != 0 ]
+  	then
+    rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
+  	echo 'REMOTE: Application folder has not been saved, aborting update. Please contact HUB Support!'
+  	exit 1
+  fi
+
+  #untar the new package
+  tar -xf JPSApps.tar.gz &>/dev/null
+
+  chmod +x -R JPSApps
+  if [[ \$HW == "rpi" ]]; then
+     sudo chown -R pi:pi JPSApps
+  fi
+
+  #restore data from prevous version
+
+  mv ./ConfigData_merged.json \$JSDIR/ConfigData.json
+  if [ \$? != 0 ]
+  	then
+    echo 'REMOTE CRITICAL ERROR!! \
+  	ConfigData.json has not been restored. Please contact HUB Support!'
+    rollback
+  	exit 3
+  fi
+  mv ./AppDB.fdb \$TOKEN
+  if [ \$? != 0 ]
+  	then
+  	echo 'REMOTE CRITICAL ERROR!! \
+  	JBL Token and Cash DB have not been restored. Please contact HUB Support!'
+    rollback
+  	exit 3
+  fi
+  #clean
+  rm -rf _update.sh JPSApps.tar.gz
+  sync
+  echo "Rebooting"
+  $SUDO reboot
+EOF
+}
