@@ -8,7 +8,7 @@ function usage() {
 function get_type () {
   TYPE=$(curl -s -m 10 http://$DEVICE:65000/jps/api/status)
   HW=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "hostname")
-  
+
   if [[ $HW == "ebb-hw-jhw-2-0" ]]
     then
 	HW=jhw
@@ -19,7 +19,7 @@ function get_type () {
     echo -e "\nDevice type " $HW " is unknown"
     exit 1
   fi
-  
+
   if [[ $? -eq 28 ]]
     then
     echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
@@ -100,8 +100,7 @@ function update_script() {
   #!/bin/bash
   #set -x
   WORKDIR=$WORKDIR
-  HW=$HW
-
+  
   #double check we are in the correct directory
   if [ \$(pwd) != \$WORKDIR ]
   	then
@@ -150,7 +149,7 @@ function update_script() {
   tar -xf JPSApps.tar.gz &>/dev/null
 
   chmod +x -R JPSApps
- 
+
   #restore data from prevous version
 
   mv ./ConfigData_merged.json \$JSDIR/ConfigData.json
