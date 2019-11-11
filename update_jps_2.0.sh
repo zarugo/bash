@@ -22,11 +22,11 @@ fi
 
 if [[ $# -gt 1 ]]; then
 	echo -e "\n   The update command supports only 1 argument (the IP address of the device to upgrade)\n"
-	man
+	usage
 	exit 1
 elif ! [[ $1 =~ $ip4 ]]; then
         echo -e "\n   This is not a valid IP address!\n"
-        man
+        usage
 	exit 1
 fi
 
@@ -35,18 +35,8 @@ fi
 echo "Saving current config file..."
 
 get_type #see functions file
+get_config #see functions file
 
-if [[ $HW == "jhw" ]]; then
-  get_config #see functions file
-elif [[ $HW == "rpi" ]]; then
-  #get access via public key
-  if ! [[ -e ~/.ssh/id_rsa.pub ]]
-   then
-     cat /dev/zero | ssh-keygen -q -N "" &>/dev/null
-  fi
-  ssh-copy-id -o "StrictHostKeyChecking no" $LOGIN@$DEVICE &>/dev/null
-  get_config #see functions file
-fi
 if ! [[ -d JPSApps_$HW ]]; then
     echo -e "\n   ERROR! \n   The update package has not been found, make sure that you have 'JPSApps_$HW' in this same folder\n"
     exit 1

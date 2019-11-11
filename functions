@@ -7,6 +7,19 @@ function usage() {
 #about folders and hardware
 function get_type () {
   TYPE=$(curl -s -m 10 http://$DEVICE:65000/jps/api/status)
+  HW=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "hostname")
+  
+  if [[ $HW == "ebb-hw-jhw-2-0" ]]
+    then
+	HW=jhw
+  elif [[ $HW == "raspberrypi" ]]
+    then
+	HW=rpi
+  else
+    echo -e "\nDevice type " $HW " is unknown"
+    exit 1
+  fi
+  
   if [[ $? -eq 28 ]]
     then
     echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
@@ -14,64 +27,52 @@ function get_type () {
   fi
   case $TYPE in
     *AppAps*)
-    HW=jhw
     LOGIN=root
     TYPE=AppAps
     APPFLD=ApsApp
     WEBFLD=apsapp
     SCRIPT=ApsAppRun
     WORKDIR=/home/root
-    SUDO=""
     ;;
     *AppLe*)
-    HW=jhw
     LOGIN=root
     TYPE=AppLe
     APPFLD=LeApp
     WEBFLD=leapp
     SCRIPT=LeAppRun
     WORKDIR=/home/root
-    SUDO=""
     ;;
     *AppLx*)
-    HW=jhw
     LOGIN=root
     TYPE=AppLx
     APPFLD=AplApp
     WEBFLD=aplapp
     SCRIPT=LxAppRun
     WORKDIR=/home/root
-    SUDO=""
     ;;
     *AppApl*)
-    HW=jhw
     LOGIN=root
     TYPE=AppApl
     APPFLD=AplApp
     WEBFLD=aplapp
     SCRIPT=AplAppRun
     WORKDIR=/home/root
-    SUDO=""
     ;;
     *AppOv*)
-    HW=rpi
-    LOGIN=pi
+    LOGIN=root
     TYPE=AppOv
     APPFLD=ApsApp
     WEBFLD=apsapp
     SCRIPT=OvAppRun
-    WORKDIR=/home/pi
-    SUDO="sudo"
+    WORKDIR=/home/root
     ;;
     *AppDr*)
-    HW=rpi
-    LOGIN=pi
+    LOGIN=root
     TYPE=AppDr
     APPFLD=LeApp
     WEBFLD=leapp
     SCRIPT=DrAppRun
-    WORKDIR=/home/pi
-    SUDO="sudo"
+    WORKDIR=/home/root
     ;;
          *)
     echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
@@ -88,7 +89,7 @@ function get_config() {
   find ./JPSApps/JPSApplication/Resources/www/webcfgtool -type d -name "*app" ! -name "${WEBFLD}" -exec rm -fr {} \; &>/dev/null
   rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_*
   cp ./JPSApps/JPSApplication/${SCRIPT}.sh ./JPSApps/JPSApplication/XXXAppRun.sh
-  ssh -o "StrictHostKeyChecking no" $LOGIN@$DEVICE "$SUDO chmod -R 777 $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}"
+  ssh -o "StrictHostKeyChecking no" $LOGIN@$DEVICE "chmod -R 777 $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}"
   scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 }
 
@@ -125,14 +126,14 @@ function update_script() {
   }
 
   #kill everything
-  pgrep -f AppRun.sh | xargs $SUDO kill  && pgrep JPSApplication | xargs $SUDO kill
+  pgrep -f AppRun.sh | xargs kill  && pgrep JPSApplication | xargs kill
   sleep 1
 
   #backup the JBL Token
   cp \$TOKEN .
 
   #remove old backups
-  ls | grep -e [JPSApps]_ | xargs $SUDO rm -fr
+  ls | grep -e [JPSApps]_ | xargs rm -fr
 
 
   #backup
@@ -149,10 +150,7 @@ function update_script() {
   tar -xf JPSApps.tar.gz &>/dev/null
 
   chmod +x -R JPSApps
-  if [[ \$HW == "rpi" ]]; then
-     sudo chown -R pi:pi JPSApps
-  fi
-
+ 
   #restore data from prevous version
 
   mv ./ConfigData_merged.json \$JSDIR/ConfigData.json
@@ -175,6 +173,6 @@ function update_script() {
   rm -rf _update.sh JPSApps.tar.gz
   sync
   echo "Rebooting"
-  $SUDO reboot
+  reboot
 EOF
 }
