@@ -100,7 +100,7 @@ function update_script() {
   #!/bin/bash
   #set -x
   WORKDIR=$WORKDIR
-  
+
   #double check we are in the correct directory
   if [ \$(pwd) != \$WORKDIR ]
   	then
