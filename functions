@@ -74,6 +74,14 @@ function get_type () {
     SCRIPT=DrAppRun
     WORKDIR=/home/root
     ;;
+    *AppLs*)
+    LOGIN=root
+    TYPE=AppLs
+    APPFLD=LeApp
+    WEBFLD=leapp
+    SCRIPT=LsAppRun
+    WORKDIR=/home/root
+    ;;
          *)
     echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
     exit 1
