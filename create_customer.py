@@ -49,7 +49,7 @@ with open(input_file) as csvfile:
         data = (json.dumps(csv_lines, sort_keys=False, indent=4, separators=(",",": "), ensure_ascii=False))
         try:
             r = requests.post(create_url, headers=headers, data=data, timeout=10.0)
-            with open("upload_results.log", "a") as log:
+            with open("create_customer_results.log", "a") as log:
                 log.write( now.strftime("%Y-%m-%d %H:%M:%S") + "  Customer inserted: " + r.text + ' ' + "Response Code from JMS was: " + str(r.status_code) + "\n" )
         except Exception as e:
             print("Soething went wrong, the error is " + str(e))
