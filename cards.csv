@@ -1,0 +1,2 @@
+cardNumber,mediaType,start_validity,end_validity,enabled,accessPolicyId,customerFirstName,CustomerLastName,displayCardNumber
+123456,proximity,1559347200000,2556057600000,True,3,Bob,Marley,
