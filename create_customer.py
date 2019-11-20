@@ -53,5 +53,4 @@ with open(input_file) as csvfile:
                 log.write( now.strftime("%Y-%m-%d %H:%M:%S") + "  Customer inserted: " + r.text + ' ' + "Response Code from JMS was: " + str(r.status_code) + "\n" )
         except Exception as e:
             print("Soething went wrong, the error is " + str(e))
-
 print("The upload is done, please check on JMS that the customers are there. The log file is upload_results.log.")
