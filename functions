@@ -106,7 +106,7 @@ function update_script() {
   #create a script to be executed remotely
   cat << EOF > _update.sh
   #!/bin/bash
-  #set -x
+  set -x
   WORKDIR=$WORKDIR
 
   #double check we are in the correct directory
@@ -122,8 +122,11 @@ function update_script() {
   fi
   TOKEN=\${WORKDIR}/JPSApps/JPSApplication/Resources/${APPFLD}/AppDB.fdb
   TOKENDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/${APPFLD}
-  CASH=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb
-  CASHDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash
+  if [[ -f \$WORKDIR/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb ]]
+    then
+    APS=true
+    CASH=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb
+  fi
   JSDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}
 
   function rollback() {
@@ -138,6 +141,8 @@ function update_script() {
 
   #backup the JBL Token
   cp \$TOKEN .
+  #backup cashDB
+  [[ \$APS ]] && cp \$CASH . || :
 
   #remove old backups
   ls | grep -e [JPSApps]_ | xargs rm -fr
@@ -148,7 +153,7 @@ function update_script() {
   #Check backup
   if [ \$? != 0 ]
   	then
-    rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
+    rm -rf _update.sh cashDB.fdb AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
   	echo 'REMOTE: Application folder has not been saved, aborting update. Please contact HUB Support!'
   	exit 1
   fi
@@ -172,7 +177,19 @@ function update_script() {
   if [ \$? != 0 ]
   	then
   	echo 'REMOTE CRITICAL ERROR!! \
-  	JBL Token and Cash DB have not been restored. Please contact HUB Support!'
+  	JBL Token has not been restored. Please contact HUB Support!'
+    rollback
+  	exit 3
+  fi
+
+  if [[ \$APS ]]
+    then
+    mv ./cashDB \$CASH
+  fi
+  if [ \$? != 0 ]
+  	then
+  	echo 'REMOTE CRITICAL ERROR!! \
+  	Cash DB has not been restored. Please contact HUB Support!'
     rollback
   	exit 3
   fi
