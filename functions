@@ -106,7 +106,7 @@ function update_script() {
   #create a script to be executed remotely
   cat << EOF > _update.sh
   #!/bin/bash
-  set -x
+  #set -x
   WORKDIR=$WORKDIR
 
   #double check we are in the correct directory
@@ -126,13 +126,14 @@ function update_script() {
     then
     APS=true
     CASH=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb
+    CASHDIR=/home/root/JPSApps/JPSApplication/Resources/Cash
   fi
   JSDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}
 
   function rollback() {
     rm -fr JPSApps 2>/dev/null 1>&2
     mv JPSApps_old JPSApps
-    rm -rf _update.sh AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
+    rm -rf _update.sh cashDB.fdb AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
   }
 
   #kill everything
@@ -184,7 +185,8 @@ function update_script() {
 
   if [[ \$APS ]]
     then
-    mv ./cashDB \$CASH
+    mkdir \$CASHDIR
+    mv ./cashDB.fdb \$CASH
   fi
   if [ \$? != 0 ]
   	then
