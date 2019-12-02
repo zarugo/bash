@@ -4,12 +4,20 @@ DEVICE=$1
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 
-#Check the functions file and source it
+#Check the prerequisites
+
+#do we have the function file?
 if ! [[ -f ./functions ]]; then
   echo -e "\n   ERROR! \n   The functions file is not present, please contact HUB support\n"
   exit 1
 else
   . ./functions
+fi
+
+#do we have java?
+if ! [[ -n $(which java) ]]; then
+  echo -e "\n   ERROR! \n   Java is not installed, please install it as it's a mandatory requirement for the update"
+  exit 1
 fi
 
 #Clean garbage from old updates
