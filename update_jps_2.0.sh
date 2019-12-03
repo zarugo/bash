@@ -15,7 +15,7 @@ else
 fi
 
 #do we have java?
-if ! [[ -n $(which java) ]]; then
+if ! [[ -n $(command -v java) ]]; then
   echo -e "\n   ERROR! \n   Java is not installed, please install it as it's a mandatory requirement for the update\n"
   exit 1
 fi
