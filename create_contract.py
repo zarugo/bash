@@ -1,18 +1,9 @@
 #!/usr/bin/python3
 # The csv file must be in the format
 # cardNumber,mediaType,start_validity,end_validity,enabled,accessPolicyId,customerFirstName,CustomerLastName,displayCardNumber
-# 123456,proximity,1559347200000,2556057600000,TRUE,9,Bob,Marley,,
+# 123456,proximity,1559347200000,2556057600000,TRUE,9,Bob,Marley,
 
-# primary_fields = ['firstname', 'lastname', 'email']
-# result = []
-# with open('mydata.csv') as csv_file:
-#     reader = csv.DictReader(csv_file, skipinitialspace=True)
-#     for row in reader:
-#         d = {k: v for k, v in row.items() if k in primary_fields}
-#         d['extraFields'] = [{'name': k, 'value': v} for k, v in row.items() if k not in primary_fields]
-#         result.append(d)
-#
-# print(json.dumps(result, indent=2))
+
 
 
 
