@@ -41,8 +41,10 @@ with open(input_file) as csvfile:
     for line in reader:
         csv_lines = {}
         nested = ["start_validity" , "end_validity" , "enabled"]
-        csv_lines = {k: v for k, v in line.items() if k not in nested}
+        plates = ["plates"]
+        csv_lines = {k: v for k, v in line.items() if k not in nested and plates}
         csv_lines["cardParameters"] = [{'type': k, 'value': v} for k, v in line.items() if k in nested]
+        csv_lines["plates"] = [v for k, v in line.items() if k in plates]
         create_url = "http://" + jms + ":8080/janus-integration/api/ext/card/create"
         headers = { "Content-Type": "application/json" , "Accept": "application/json", "Janus-TP-Authorization": token }
         data = (json.dumps(csv_lines, sort_keys=False, indent=4, separators=(",",": "), ensure_ascii=False))
