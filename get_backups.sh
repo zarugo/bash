@@ -65,7 +65,7 @@ if [ ! -d "$BACKUP_DIR" ]
 		echo -n "The Backup directory could not be created, the backup failed."
 		exit 1
 	else
-		find $BACKUP_DIR/* -mtime +7 -exec rm -fr {} \; 2>/dev/null
+		find $BACKUP_DIR/* -mtime +7 -exec rm -f {} \; 2>/dev/null
 fi
 
 #check argument
