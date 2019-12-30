@@ -1,21 +1,25 @@
 #!/bin/bash
 #set -x
-TEMP_DIR=/cygdrive/c/ebb_temp
-BACKUP_DIR=/cygdrive/c/ebb_configurations_backup
 BACKUP_DATE=$(date +%F-%H-%M-%S)
 BACKUP_FILE="${BACKUP_DATE}.tar.gz"
 PC=$(hostname)
 ISCYG=$(uname -s)
 
-if [ $ISCYG = "Linux" ]
-	then
-	TEMP_DIR=~/ebb_temp
-	BACKUP_DIR=~/ebb_configurations_backup
-elif [ $ISCYG = "CYGWIN" ]
-	then
+case  $ISCYG in
+		Linux*)
+		TEMP_DIR=~/ebb_temp
+	  BACKUP_DIR=~/Backup_JMS/JPS
+		;;
+		CYGWIN*)
+		if [ ! -d "/cygdrive/d" ]; then
 		TEMP_DIR=/cygdrive/c/ebb_temp
-		BACKUP_DIR=/cygdrive/c/ebb_configurations_backup
-	fi
+		BACKUP_DIR=/cygdrive/c/Backup_JMS/JPS
+		else
+		TEMP_DIR=/cygdrive/d/ebb_temp
+		BACKUP_DIR=/cygdrive/d/Backup_JMS/JPS
+		fi
+		;;
+	esac
 
 function GET_DEVICES () {
 	case $ISCYG in
@@ -55,14 +59,20 @@ if [ ! -d "$BACKUP_DIR" ]
   		echo Creating Backup dir...
 fi
 
-#delete backups files older than 60 days
-find $BACKUP_DIR/* -mtime +60 -exec rm -fr {} \;
+#delete backups files older than 7 days
+if [ ! -d "$BACKUP_DIR" ]
+	then
+		echo -n "The Backup directory could not be created, the backup failed."
+		exit 1
+	else
+		find $BACKUP_DIR/* -mtime +7 -exec rm -fr {} \; 2>/dev/null
+fi
 
 #check argument
 if [ $# -lt 1  ]
  	then
-		 echo -en "usage:\n give those arguments  \n \"<ip> <ip> ...\" to get only specific device JPSApps backups \n \"all\" to get all JPSApps backups \n "
-        	 exit 1
+		 echo -en "Usage:\n give those arguments  \n \"<ip> <ip> ...\" to get only specific device JPSApps backups \n \"all\" to get all JPSApps backups \n "
+     exit 1
 fi
 
 #get the JPSApp files, save some space and rename files
@@ -95,5 +105,5 @@ fi
 
 if [ $? = 0 ]
 	then
- 		echo 'All done, your JPSApps backup files are inside the "ebb_configurations_backup" directory.'
+ 		echo 'All done, your JPSApps backup files are inside the "Backup_JMS\JPS" directory.'
 fi
