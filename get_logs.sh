@@ -6,15 +6,21 @@ BACKUP_FILE="${BACKUP_DATE}.tar.gz"
 PC=$(hostname)
 ISCYG=$(uname -s)
 
-if [ $ISCYG = "Linux" ]
-	then
-	TEMP_DIR=~/ebb_temp
-	BACKUP_DIR=~/ebb_weekly_logs
-elif [ $ISCYG = "CYGWIN" ]
-	then
+case  $ISCYG in
+		Linux*)
+		TEMP_DIR=~/ebb_temp
+	  BACKUP_DIR=~/Backup_JMS/JPS
+		;;
+		CYGWIN*)
+		if [ ! -d "/cygdrive/d" ]; then
 		TEMP_DIR=/cygdrive/c/ebb_temp
-		BACKUP_DIR=/cygdrive/c/ebb_weekly_logs
-fi
+		BACKUP_DIR=/cygdrive/c/Logs_JPS
+		else
+		TEMP_DIR=/cygdrive/d/ebb_temp
+		BACKUP_DIR=/cygdrive/d/Logs_JPS
+		fi
+		;;
+	esac
 
 function GET_DEVICES () {
 	case $ISCYG in
