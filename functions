@@ -106,7 +106,7 @@ function get_config() {
   find ./JPSApps/JPSApplication/Resources/www/webcfgtool -type d -name "*app" ! -name "${WEBFLD}" -exec rm -fr {} \; &>/dev/null
   rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_* 2>/dev/null
   cp ./JPSApps/JPSApplication/${SCRIPT}.sh ./JPSApps/JPSApplication/XXXAppRun.sh
-  scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
+  scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
   scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 }
 
