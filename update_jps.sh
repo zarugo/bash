@@ -60,6 +60,7 @@ if ! [[ -d JPSApps_$HW ]]; then
     exit 1
 fi
 
+echo "Merging the configuration files..."
 #######################################
 #MERGE JSON FILE
 #######################################
@@ -96,6 +97,7 @@ fi
 
 
 #Create the update script that will be pushed to the device
+echo "Creating the update script..."
 update_script #see functions file
 
 #Create the installation package that will be pushed to the device
@@ -103,6 +105,7 @@ echo "Creating the update package file..."
 tar -zcf JPSApps.tar.gz JPSApps
 
 #Push the package, update script and ConfigData.json to the device
+echo "Coping the update package to the device..."
 scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json ConfigData_SCHED_merged.json $LOGIN@$DEVICE:$WORKDIR
 
 #Execute the update script remotely
