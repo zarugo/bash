@@ -1,3 +1,11 @@
+###################################################################
+#Script Name	: Funcions repo for update_jps.sh
+#Description	: Provides functions needed to the main script
+#Args        	: None
+#Release      : 1.12.5.5
+###################################################################
+
+
 #usage help
 function usage() {
     echo -e "\n   You must provide the IP address of the device you want to update as an argument"
@@ -91,13 +99,14 @@ esac
 #get the JPS config files
 function get_config() {
   cp ./JPSApps_$HW/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json ./ConfigData_NEW.json
+  cp ./JPSApps_$HW/JPSApplication/Resources/www/webcfgtool/outsched/ConfigData.json ./ConfigData_SCHED_NEW.json
   cp -r JPSApps_$HW JPSApps
   find ./JPSApps/JPSApplication/ -name "*AppRun.sh" ! -name "${SCRIPT}.sh" -delete
   find ./JPSApps/JPSApplication/Resources -maxdepth 1 -type d -name "*App" ! -name "${APPFLD}" -exec rm -fr {} \; &>/dev/null
   find ./JPSApps/JPSApplication/Resources/www/webcfgtool -type d -name "*app" ! -name "${WEBFLD}" -exec rm -fr {} \; &>/dev/null
-  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_*
+  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_* 2>/dev/null
   cp ./JPSApps/JPSApplication/${SCRIPT}.sh ./JPSApps/JPSApplication/XXXAppRun.sh
-  ssh -o "StrictHostKeyChecking no" $LOGIN@$DEVICE "chmod -R 777 $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}"
+  scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
   scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
 }
 
@@ -133,7 +142,7 @@ function update_script() {
   function rollback() {
     rm -fr JPSApps 2>/dev/null 1>&2
     mv JPSApps_old JPSApps
-    rm -rf _update.sh cashDB.fdb AppDB.fdb JPSApps.tar.gz ConfigData_merged.json 2>/dev/null 1>&2
+    rm -rf _update.sh cashDB.fdb AppDB.fdb JPSApps.tar.gz ConfigData* 2>/dev/null 1>&2
   }
 
   #kill everything
@@ -174,6 +183,15 @@ function update_script() {
     rollback
   	exit 3
   fi
+  mv ./ConfigData_SCHED_merged.json \${WORKDIR}/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/ConfigData.json
+  if [ \$? != 0 ]
+  	then
+    echo 'REMOTE CRITICAL ERROR!! \
+  	ConfigData.json for scheduler has not been restored. Please contact HUB Support!'
+    rollback
+  	exit 3
+  fi
+
   mv ./AppDB.fdb \$TOKEN
   if [ \$? != 0 ]
   	then

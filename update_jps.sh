@@ -1,4 +1,12 @@
 #!/bin/bash
+
+###################################################################
+#Script Name	: update_jps.sh
+#Description	: Automatic update tool to update the JPS app on JHW and RPI
+#Args        	: target ip
+#Release      : 1.12.5.5
+###################################################################
+
 #set -x
 DEVICE=$1
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
@@ -21,7 +29,7 @@ if ! [[ -n $(command -v java) ]]; then
 fi
 
 #Clean garbage from old updates
-rm -rf ConfigData_ORIG.json ConfigData_NEW.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps &>/dev/null
+rm -rf ConfigData* _update.sh JPSApps.tar.gz JPSApps &>/dev/null
 #Check arguments
 if [[ $1 == "--help" ||  $1 == "-h" || $# -lt 1 ]]; then
   usage
@@ -65,9 +73,27 @@ if [[ -z "$NOMERGE" ]]; then
 else
   echo -e "\n ERROR! The configuration file merge has failed, please check the merge.log file."
   #Take the trash out as the update is aborted and must be started over
-  rm -rf ConfigData_ORIG.json ConfigData_NEW.json ConfigData_merged.json JPSApps &>/dev/null
+  rm -rf ConfigData* JPSApps &>/dev/null
   exit 1
 fi
+#######################################
+#MERGE SCHEDULER JSON FILE
+#######################################
+java -jar JpsMergeTool*.jar ./ConfigData_SCHED_ORIG.json ./ConfigData_SCHED_NEW.json ./ConfigData_SCHED_merged.json 2> merge_sched.log
+#######################################
+# CHECK MERGING ERRORS
+#######################################
+NOMERGE=$(grep ERROR ./merge_sched.log)
+if [[ -z "$NOMERGE" ]]; then
+  rm ./merge_sched.log
+else
+  echo -e "\n ERROR! The scheduler configuration file merge has failed, please check the merge_sched.log file."
+  #Take the trash out as the update is aborted and must be started over
+  rm -rf ConfigData* JPSApps &>/dev/null
+  exit 1
+fi
+
+
 
 #Create the update script that will be pushed to the device
 update_script #see functions file
@@ -77,7 +103,7 @@ echo "Creating the update package file..."
 tar -zcf JPSApps.tar.gz JPSApps
 
 #Push the package, update script and ConfigData.json to the device
-scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json $LOGIN@$DEVICE:$WORKDIR
+scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json ConfigData_SCHED_merged.json $LOGIN@$DEVICE:$WORKDIR
 
 #Execute the update script remotely
 echo "Updating device..."
@@ -86,5 +112,5 @@ ssh -o "StrictHostKeyChecking no" $LOGIN@$DEVICE "$WORKDIR/_update.sh"
 
 #Take the trash out
 echo "Cleaning temp files..."
-rm -rf ConfigData_ORIG.json ConfigData_NEW.json ConfigData_merged.json _update.sh JPSApps.tar.gz JPSApps
+rm -rf ConfigData* _update.sh JPSApps.tar.gz JPSApps
 echo -e "\nThe update has been completed correctly."
