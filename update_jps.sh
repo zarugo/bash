@@ -88,10 +88,9 @@ NOMERGE=$(grep ERROR ./merge_sched.log)
 if [[ -z "$NOMERGE" ]]; then
   rm ./merge_sched.log
 else
-  echo -e "\n ERROR! The scheduler configuration file merge has failed, please check the merge_sched.log file."
+  echo -e "\n ERROR! The scheduler configuration file merge has failed, please check the merge_sched.log file. The peripheral will lose the default scheduler configuration."
   #Take the trash out as the update is aborted and must be started over
-  rm -rf ConfigData* JPSApps &>/dev/null
-  exit 1
+  mv ./ConfigData_SCHED_NEW.json ./ConfigData_SCHED_merged.json
 fi
 
 

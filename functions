@@ -1,5 +1,5 @@
 ###################################################################
-#Script Name	: Funcions repo for update_jps.sh
+#Script Name	: Funcions repo for update_jps.sh - not to be executed directly
 #Description	: Provides functions needed to the main script
 #Args        	: None
 #Release      : 1.12.5.5
