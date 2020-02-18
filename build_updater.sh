@@ -14,7 +14,7 @@ JBL_BUILD=''
 JBL_RUN=''
 LOGFILE=./build_updater_$(date +%F-%H-%M-%S).log
 
-
+# sc query tomcat9 | grep STATE | awk '{print $4}'
 
 function log(){
 	echo "[$(date --rfc-3339=seconds)]: $*" >> $LOGFILE
