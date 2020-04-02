@@ -22,7 +22,11 @@ fi
 
 JPS_DEVICE_IP=""
 JPS_PARENT_PATH=""
-JSPORT=$2
+JSPORT=65000
+
+if ! [[ -z "$2" ]]; then
+  JSPORT=$2
+fi
 
 #Check the prerequisites
 

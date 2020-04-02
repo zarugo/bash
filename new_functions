@@ -46,17 +46,15 @@ function get_loc_type () {
 #Get the remote application type and set global variables
 #about folders and hardware
 function get_rem_type () {
-  TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:65000/jps/api/status) #try 1st the standard port
-  if [[ $? -eq 28 ]]; then    
-    TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:65010/jps/api/status) #try the 2nd standard port (TBD: what is the port??)
+  TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
+  if [[ $? -eq 28 ]]; then
+    JSPORT=65010   #TBD: what is the port??
+    TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try the 2nd standard port
     if [[ $? -eq 28 ]]; then
-      TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try the port passed as argument 
-      if [[ $? -eq 28 ]]; then
-         echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
-         exit 1
-      fi
+      echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
+      exit 1
     fi
-  fi  
+  fi
   HW=$(ssh -o "StrictHostKeyChecking no" root@$JPS_DEVICE_IP "hostname")
 
   if [[ $HW == "ebb-hw-jhw-2-0" ]]
@@ -68,7 +66,7 @@ function get_rem_type () {
 	HW=rpi
 	SCRIPTEXT=.sh
   else
-    echo -e "\nDevice type " $HW " is unknown"
+    echo -e "\nHardware type "$HW" is unknown"
     exit 1
   fi
  }
@@ -82,7 +80,7 @@ function get_type () {
 	else
 		get_rem_type
 	fi
-  
+
 	case $TYPE in
 		*AppAps*)
 		LOGIN=root
@@ -212,7 +210,7 @@ function update_script() {
   }
 
   #kill everything
-  curl -d '{"mode":"SoftKill"}' -H "Content-Type: application/json" -X POST -s -m 10 http://127.0.0.1:$JSPORT/jps/api/command/reboot
+  curl -d '{"mode":"SoftKill"}' -H "Content-Type: application/json" -X POST -s -m 5 http://127.0.0.1:$JSPORT/jps/api/command/reboot
   sleep 5
 
   #backup the JBL Token
