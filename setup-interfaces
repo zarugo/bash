@@ -15,10 +15,10 @@ getinfo()
   echo "You actual configuration is:"
   ip addr show dev $interface | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 1
   cdr2mask $(ip addr show dev $interface | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 2)
-  ip route list | grep default | awk $'{print $3}' | head -n 1  
+  ip route list | grep default | awk $'{print $3}' | head -n 1
   echo "--------------------------------------------"
   echo "Your dns config is:"
-  cat /etc/resolv.conf
+  cat /etc/resolv.conf | tail -n +3
   echo "--------------------------------------------"
   echo "Press ENTER to use default"
   read -p "Enter your gateway ip address:    (use default 192.168.1.1   ?):" routerip
@@ -43,9 +43,8 @@ cat << EOF > $1
 auto lo
 iface lo inet loopback
 # The primary network interface
-auto $interface
-#iface enp0s3 inet dhcp
 
+auto $interface
 #Your static network configuration
 iface $interface inet static
 address $staticip
@@ -65,6 +64,12 @@ EOF
   esac
   exit 0
 }
+
+if [[ $EUID -ne 0 ]]; then
+   echo "You must be root to do this, please run the script with sudo." 
+   exit 1
+fi
+
 
 if [ ! -f $file ]; then
   echo ""
@@ -95,4 +100,3 @@ while true; do
         * ) echo "Pleas enter y or n!";;
   esac
 done
-
