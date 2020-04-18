@@ -48,12 +48,8 @@ function get_loc_type () {
 function get_rem_type () {
   TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
   if [[ $? -eq 28 ]]; then
-    JSPORT=65010   #TBD: what is the port??
-    TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try the 2nd standard port
-    if [[ $? -eq 28 ]]; then
-      echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
-      exit 1
-    fi
+    echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
+    exit 1
   fi
   HW=$(ssh -o "StrictHostKeyChecking no" root@$JPS_DEVICE_IP "hostname")
 
