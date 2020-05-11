@@ -1,4 +1,5 @@
 #!/bin/bash
+#set -x
 
 ###################################################################
 #Script Name	: update_jps.sh
@@ -7,10 +8,25 @@
 #Release      : 1.12.5.5
 ###################################################################
 
-#set -x
-DEVICE=$1
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
+
+#Clean garbage from old updates
+rm -rf ConfigData* _update.sh JPSApps.tar.gz JPSApps &>/dev/null
+
+#check hepers
+if [[ $1 == "--help" ||  $1 == "-h" || $# -lt 1 ]]; then
+  usage
+  exit 0
+fi
+
+JPS_DEVICE_IP=""
+JPS_PARENT_PATH=""
+JSPORT=65000
+
+if ! [[ -z "$2" ]]; then
+  JSPORT=$2
+fi
 
 #Check the prerequisites
 
@@ -28,23 +44,23 @@ if ! [[ -n $(command -v java) ]]; then
   exit 1
 fi
 
-#Clean garbage from old updates
-rm -rf ConfigData* _update.sh JPSApps.tar.gz JPSApps &>/dev/null
 #Check arguments
-if [[ $1 == "--help" ||  $1 == "-h" || $# -lt 1 ]]; then
-  usage
-  exit 0
-fi
-
-if [[ $# -gt 1 ]]; then
-	echo -e "\n   The update command supports only 1 argument (the IP address of the device to upgrade)\n"
+if [[ $# -gt 2 ]]; then
+	echo -e "\n   The update command supports only 2 argument:\n -) the IP address of the device to upgrade or the local PATH for local update\n\ -)the port)\n"
 	usage
 	exit 1
-elif ! [[ $1 =~ $ip4 ]]; then
-        echo -e "\n   This is not a valid IP address!\n"
-        usage
+elif [[ -d "$1" ]]; then
+	JPS_DEVICE_IP="127.0.0.1"
+	JPS_PARENT_PATH=$1
+elif [[ $1 =~ $ip4 ]]; then
+	JPS_DEVICE_IP=$1
+	JPS_PARENT_PATH=/home/root
+else
+	echo -e "\n  '$1' is not a valid IP address nor a valid local PATH!\n"
+    usage
 	exit 1
 fi
+
 
 #Get all the info we need on the device (hardware type and configuration)
 
@@ -103,14 +119,21 @@ update_script #see functions file
 echo "Creating the update package file..."
 tar -zcf JPSApps.tar.gz JPSApps
 
-#Push the package, update script and ConfigData.json to the device
-echo "Coping the update package to the device..."
-scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json ConfigData_SCHED_merged.json $LOGIN@$DEVICE:$WORKDIR
+#Push the package, update script and ConfigData.json to the device and Execute the update script remotely
 
-#Execute the update script remotely
-echo "Updating device..."
-ssh -o "StrictHostKeyChecking no" $LOGIN@$DEVICE "chmod +x $WORKDIR/_update.sh"
-ssh -o "StrictHostKeyChecking no" $LOGIN@$DEVICE "$WORKDIR/_update.sh"
+if [[ -d $JPS_PARENT_PATH ]]; then
+	echo "Coping the update package to the device..."
+	cp JPSApps.tar.gz _update.sh ConfigData_merged.json ConfigData_SCHED_merged.json $JPS_PARENT_PATH
+	echo "Updating device..."
+	chmod +x $WORKDIR/_update.sh
+	$WORKDIR/_update.sh
+else
+	echo "Coping the update package to the device..."
+	scp -o "StrictHostKeyChecking no" -p JPSApps.tar.gz _update.sh ConfigData_merged.json ConfigData_SCHED_merged.json $LOGIN@$JPS_DEVICE_IP:$WORKDIR
+	echo "Updating device..."
+	ssh -o "StrictHostKeyChecking no" $LOGIN@$JPS_DEVICE_IP "chmod +x $WORKDIR/_update.sh"
+	ssh -o "StrictHostKeyChecking no" $LOGIN@$JPS_DEVICE_IP "$WORKDIR/_update.sh"
+fi
 
 #Take the trash out
 echo "Cleaning temp files..."

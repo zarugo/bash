@@ -4,110 +4,170 @@
 #Args        	: None
 #Release      : 1.12.5.5
 ###################################################################
-
+TYPE=""
+HW=""
+SCRIPTEXT=""
 
 #usage help
 function usage() {
-    echo -e "\n   You must provide the IP address of the device you want to update as an argument"
-    echo -e "\n   Usage:\n   $0 [IP] \n"
+    echo -e "You must provide at most 2 argument:\n -) the IP address of the device to upgrade or the local PATH for local update\n -) the port)\n"
+    echo -e "\n   Usage:\n   $0 [IP|PATH] [PORT] \n"
 }
+
 #Get the application type and set global variables
 #about folders and hardware
-function get_type () {
-  TYPE=$(curl -s -m 10 http://$DEVICE:65000/jps/api/status)
-  HW=$(ssh -o "StrictHostKeyChecking no" root@$DEVICE "hostname")
+function get_loc_type () {
+  	read -p "Set the target env to update (jhw/rpi/win)? " answer
+	case ${answer:0:1} in
+		j )
+			echo jhw
+			HW=jhw
+			SCRIPTEXT=.sh
+		;;
+		r )
+			echo rpi
+			HW=rpi
+			SCRIPTEXT=.sh
+		;;
+		w )
+			echo win
+			HW=win
+			SCRIPTEXT=.bat
+		;;
+		* )
+			echo Unsupported target!
+			exit
+		;;
+	esac
+
+  read -p "Device type is unknown...Set the target pp to update (AppAps/AppLe/AppLx/AppApl/AppOv/AppDr/AppLs/AppRdrWtr)? " TYPE
+}
+
+#Get the remote application type and set global variables
+#about folders and hardware
+function get_rem_type () {
+  TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
+  if [[ $? -eq 28 ]]; then
+    echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
+    exit 1
+  fi
+  HW=$(ssh -o "StrictHostKeyChecking no" root@$JPS_DEVICE_IP "hostname")
 
   if [[ $HW == "ebb-hw-jhw-2-0" ]]
     then
 	HW=jhw
+	SCRIPTEXT=.sh
   elif [[ $HW == "raspberrypi" ]]
     then
 	HW=rpi
+	SCRIPTEXT=.sh
   else
-    echo -e "\nDevice type " $HW " is unknown"
+    echo -e "\nHardware type "$HW" is unknown"
     exit 1
   fi
+}
 
-  if [[ $? -eq 28 ]]
-    then
-    echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
-    exit 1
-  fi
-  case $TYPE in
-    *AppAps*)
-    LOGIN=root
-    TYPE=AppAps
-    APPFLD=ApsApp
-    WEBFLD=apsapp
-    SCRIPT=ApsAppRun
-    WORKDIR=/home/root
-    ;;
-    *AppLe*)
-    LOGIN=root
-    TYPE=AppLe
-    APPFLD=LeApp
-    WEBFLD=leapp
-    SCRIPT=LeAppRun
-    WORKDIR=/home/root
-    ;;
-    *AppLx*)
-    LOGIN=root
-    TYPE=AppLx
-    APPFLD=AplApp
-    WEBFLD=aplapp
-    SCRIPT=LxAppRun
-    WORKDIR=/home/root
-    ;;
-    *AppApl*)
-    LOGIN=root
-    TYPE=AppApl
-    APPFLD=AplApp
-    WEBFLD=aplapp
-    SCRIPT=AplAppRun
-    WORKDIR=/home/root
-    ;;
-    *AppOv*)
-    LOGIN=root
-    TYPE=AppOv
-    APPFLD=ApsApp
-    WEBFLD=apsapp
-    SCRIPT=OvAppRun
-    WORKDIR=/home/root
-    ;;
-    *AppDr*)
-    LOGIN=root
-    TYPE=AppDr
-    APPFLD=LeApp
-    WEBFLD=leapp
-    SCRIPT=DrAppRun
-    WORKDIR=/home/root
-    ;;
-    *AppLs*)
-    LOGIN=root
-    TYPE=AppLs
-    APPFLD=LeApp
-    WEBFLD=leapp
-    SCRIPT=LsAppRun
-    WORKDIR=/home/root
-    ;;
-         *)
-    echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device"
-    exit 1
-    ;;
-esac
+#Get the application type and set global variables
+#about folders and hardware
+function get_type () {
+
+	if [[ -d "$JPS_PARENT_PATH" ]]; then
+		get_loc_type
+	else
+		get_rem_type
+	fi
+
+	case $TYPE in
+		*AppAps*)
+		LOGIN=root
+		TYPE=AppAps
+		APPFLD=ApsApp
+		WEBFLD=apsapp
+		SCRIPT=ApsAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+		*AppLe*)
+		LOGIN=root
+		TYPE=AppLe
+		APPFLD=LeApp
+		WEBFLD=leapp
+		SCRIPT=LeAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+		*AppLx*)
+		LOGIN=root
+		TYPE=AppLx
+		APPFLD=AplApp
+		WEBFLD=aplapp
+		SCRIPT=LxAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+		*AppApl*)
+		LOGIN=root
+		TYPE=AppApl
+		APPFLD=AplApp
+		WEBFLD=aplapp
+		SCRIPT=AplAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+		*AppOv*)
+		LOGIN=root
+		TYPE=AppOv
+		APPFLD=ApsApp
+		WEBFLD=apsapp
+		SCRIPT=OvAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+		*AppDr*)
+		LOGIN=root
+		TYPE=AppDr
+		APPFLD=LeApp
+		WEBFLD=leapp
+		SCRIPT=DrAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+		*AppLs*)
+		LOGIN=root
+		TYPE=AppLs
+		APPFLD=LeApp
+		WEBFLD=leapp
+		SCRIPT=LsAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+		*AppRdrWtr*)
+		LOGIN=root
+		TYPE=AppRdrWtr
+		APPFLD=ApsApp
+		WEBFLD=apsapp
+		SCRIPT=RdrWtrAppRun$SCRIPTEXT
+		WORKDIR=$JPS_PARENT_PATH
+		;;
+			 *)
+		echo -e "\nDevice $TYPE type is unknown...make sure the JPSApplication is running on the device"
+		exit 1
+		;;
+	esac
+
+    echo -e "\nFound supported $TYPE type"
 }
 #get the JPS config files
 function get_config() {
   cp ./JPSApps_$HW/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json ./ConfigData_NEW.json
   cp ./JPSApps_$HW/JPSApplication/Resources/www/webcfgtool/outsched/ConfigData.json ./ConfigData_SCHED_NEW.json
   cp -r JPSApps_$HW JPSApps
-  find ./JPSApps/JPSApplication/ -name "*AppRun.sh" ! -name "${SCRIPT}.sh" -delete
+  find ./JPSApps/JPSApplication/ -name "*AppRun$SCRIPTEXT" ! -name "${SCRIPT}" -delete
   find ./JPSApps/JPSApplication/Resources -maxdepth 1 -type d -name "*App" ! -name "${APPFLD}" -exec rm -fr {} \; &>/dev/null
   find ./JPSApps/JPSApplication/Resources/www/webcfgtool -type d -name "*app" ! -name "${WEBFLD}" -exec rm -fr {} \; &>/dev/null
   rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_* 2>/dev/null
-  cp ./JPSApps/JPSApplication/${SCRIPT}.sh ./JPSApps/JPSApplication/XXXAppRun.sh
-  scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
-  scp -o "StrictHostKeyChecking no" -p $LOGIN@$DEVICE:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+  cp ./JPSApps/JPSApplication/${SCRIPT} ./JPSApps/JPSApplication/XXXAppRun$SCRIPTEXT
+
+  if [[ -d $JPS_PARENT_PATH ]]; then
+	cp $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
+	cp $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+  else
+	scp -o "StrictHostKeyChecking no" -p $LOGIN@$JPS_DEVICE_IP:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
+	scp -o "StrictHostKeyChecking no" -p $LOGIN@$JPS_DEVICE_IP:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+  fi
 }
 
 
@@ -129,28 +189,45 @@ function update_script() {
   	echo 'REMOTE: No JPSApps.tar.gz package found for update '
   	exit 1
   fi
-  TOKEN=\${WORKDIR}/JPSApps/JPSApplication/Resources/${APPFLD}/AppDB.fdb
-  TOKENDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/${APPFLD}
+
+  RESOURCESDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources
+  APPDB_FDB=\${RESOURCESDIR}/${APPFLD}/AppDB.fdb
+  JPSAPPDB_SQLITE=\${RESOURCESDIR}/jpsAppDB.sqlite
+  JPSUSPDB_SQLITE=\${RESOURCESDIR}/jpsUspDB.sqlite
+
   if [[ -f \$WORKDIR/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb ]]
     then
     APS=true
     CASH=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb
-    CASHDIR=/home/root/JPSApps/JPSApplication/Resources/Cash
+    CASHDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/Cash
   fi
   JSDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}
 
   function rollback() {
     rm -fr JPSApps 2>/dev/null 1>&2
     mv JPSApps_old JPSApps
-    rm -rf _update.sh cashDB.fdb AppDB.fdb JPSApps.tar.gz ConfigData* 2>/dev/null 1>&2
+    rm -rf _update.sh cashDB.fdb AppDB.fdb *.sqlite JPSApps.tar.gz ConfigData* 2>/dev/null 1>&2
   }
 
   #kill everything
-  pgrep -f AppRun.sh | xargs kill  && pgrep JPSApplication | xargs kill
-  sleep 1
+  curl -d '{"mode":"SoftKill"}' -H "Content-Type: application/json" -X POST -s -m 5 http://127.0.0.1:$JSPORT/jps/api/command/reboot
+  sleep 5
 
-  #backup the JBL Token
-  cp \$TOKEN .
+  #backup the JPSAPPDB_SQLITE
+  if [[ -f \$JPSAPPDB_SQLITE ]]
+  	then
+	cp \$JPSAPPDB_SQLITE . >/dev/null
+  fi
+
+  #backup the JPSUSPDB_SQLITE
+  if [[ -f \$JPSUSPDB_SQLITE ]]
+  	then
+	cp \$JPSUSPDB_SQLITE . >/dev/null
+  fi
+
+  #backup the APPDB_FDB
+  cp \$APPDB_FDB .
+
   #backup cashDB
   [[ \$APS ]] && cp \$CASH . || :
 
@@ -192,27 +269,33 @@ function update_script() {
   	exit 3
   fi
 
-  mv ./AppDB.fdb \$TOKEN
+  mv jpsAppDB.sqlite \$JPSAPPDB_SQLITE >/dev/null
+
+  mv jpsUspDB.sqlite \$JPSUSPDB_SQLITE >/dev/null
+
+  mv ./AppDB.fdb \$APPDB_FDB
   if [ \$? != 0 ]
   	then
   	echo 'REMOTE CRITICAL ERROR!! \
-  	JBL Token has not been restored. Please contact HUB Support!'
+  	JBL APPDB_FDB has not been restored. Please contact HUB Support!'
     rollback
   	exit 3
   fi
 
   if [[ \$APS ]]
-    then
-    mkdir \$CASHDIR
-    mv ./cashDB.fdb \$CASH
+	then
+	mkdir \$CASHDIR
+	mv ./cashDB.fdb \$CASH
+
+    if [ \$? != 0 ]
+  	  then
+  	  echo 'REMOTE CRITICAL ERROR!! \
+  	  Cash DB has not been restored. Please contact HUB Support!'
+  	  rollback
+  	  exit 3
+    fi
   fi
-  if [ \$? != 0 ]
-  	then
-  	echo 'REMOTE CRITICAL ERROR!! \
-  	Cash DB has not been restored. Please contact HUB Support!'
-    rollback
-  	exit 3
-  fi
+
   #clean
   rm -rf _update.sh JPSApps.tar.gz
   sync
