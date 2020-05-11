@@ -14,11 +14,24 @@ ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 #Clean garbage from old updates
 rm -rf ConfigData* _update.sh JPSApps.tar.gz JPSApps &>/dev/null
 
-#check hepers
+#do we have the function file?
+if ! [[ -f ./functions ]]; then
+  echo -e "\n   ERROR! \n   The functions file is not present, please contact HUB support\n"
+  exit 1
+else
+  . ./functions
+fi
+
+#prevent known_hosts issues: if the argument is an IP, delete only the public key of that IP, so we do not affect other ssh sessions
+
+[[ $1 =~ $ip4 ]] && sed -i -E "s/$1.+//" ~/.ssh/known_hosts
+
+#check helpers
 if [[ $1 == "--help" ||  $1 == "-h" || $# -lt 1 ]]; then
   usage
   exit 0
 fi
+
 
 JPS_DEVICE_IP=""
 JPS_PARENT_PATH=""
@@ -29,14 +42,6 @@ if ! [[ -z "$2" ]]; then
 fi
 
 #Check the prerequisites
-
-#do we have the function file?
-if ! [[ -f ./functions ]]; then
-  echo -e "\n   ERROR! \n   The functions file is not present, please contact HUB support\n"
-  exit 1
-else
-  . ./functions
-fi
 
 #do we have java?
 if ! [[ -n $(command -v java) ]]; then
