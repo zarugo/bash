@@ -5,7 +5,7 @@
 #Script Name	: update_xegu.sh
 #Description	: Automatic update tool to update the JPS app on JHW and RPI
 #Args        	: target ip
-#Release      : 1.12.5.5
+#Release      : 1.12_rc
 ###################################################################
 
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
