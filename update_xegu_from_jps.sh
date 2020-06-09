@@ -80,7 +80,6 @@ case $type in
   800x480 )
   binary="/mnt/sd/xegu/small/xegu"
   xegulang="/home/root/JPSApps/JPSApplication/Resources/xegulang.xml"
-  xegu_script #generate the start script to be pushed on small displays for the xegu / xegu_ul problem
   ;;
   1366x768 )
   binary="/mnt/sd/xegu/big/xegu"
