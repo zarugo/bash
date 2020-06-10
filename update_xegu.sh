@@ -96,6 +96,7 @@ function update_display () {
     rm -f xegu.sh
   fi
   sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'mv /home/root/xegu /home/root/xegu.old'
+  sshpass -p $password scp -o "StrictHostKeyChecking no" $xegulang $username@$ip:/home/root/.local/share/xegu/xegulang.xml
   sshpass -p $password scp -o "StrictHostKeyChecking no" $binary $username@$ip:/home/root/xegu
   sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'chmod +x xegu'
   sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'reboot'
