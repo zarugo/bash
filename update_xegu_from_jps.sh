@@ -46,7 +46,7 @@ EOF
 }
 
 function update_binary () {
-  ./sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'find /home/root/ -regex ".*xegu.*old" -delete'
+  ./sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'find /home/root/ -regex ".*xegu.*old" | xargs rm'
   #TBD check if we have space - for some reason, the space is very little but we are able to upload the files anyway
   #occupied=$(sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'df -h | grep ubi0 | awk "{print \$5}" | cut -d "%" -f1')
   # if [[ $occupied -ge 88 ]]; then
