@@ -22,8 +22,10 @@ REM *********************************************
 SET POSTGRES_HOME=C:\Program Files\PostgreSQL\9.6
 SET POSTGRES_USER=jbl
 SET PGPASSWORD=jbl
+SET DB_HOST=127.0.0.1
 SET DB_NAME=jbl
 SET BACKUP_LOCATION=D:\Backup_JMS\jbl
+
 
 IF NOT EXIST D:\ GOTO reset_location
 IF NOT EXIST %BACKUP_LOCATION% (
@@ -55,7 +57,7 @@ echo    Perform database backup (%BACKUP_LOCATION%\%BACKUP_FILE%)
 
 IF %ERRORLEVEL% == 0 (
 
-	"%POSTGRES_HOME%\bin\pg_dump.exe" -U %POSTGRES_USER% -w -F c -b -v -f "%BACKUP_LOCATION%\%BACKUP_FILE%" %DB_NAME% >> "%LOGFILE%" 2>&1
+	"%POSTGRES_HOME%\bin\pg_dump.exe" -U %POSTGRES_USER% -w -h %DB_HOST% -F c -b -v -f "%BACKUP_LOCATION%\%BACKUP_FILE%" %DB_NAME% >> "%LOGFILE%" 2>&1
 
 	IF %ERRORLEVEL% == 0 (
 		echo    SUCCESS
