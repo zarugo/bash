@@ -145,7 +145,7 @@ case $type in
   1376x768 )
   binary="./Software/10.1_15.6_inch/xegu"
   xegulang="./Language/xegulang.xml"
-  echo "The display is a 15.6 Inches FHD model..."
+  echo "The display is a 15.6 Inches HDR model..."
   ;;
 
 esac
