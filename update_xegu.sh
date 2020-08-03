@@ -142,6 +142,11 @@ case $type in
   xegulang="./Language/xegulang.xml"
   echo "The display is a 15.6 Inches FHD model..."
   ;;
+  1376x768 )
+  binary="./Software/10.1_15.6_inch/xegu"
+  xegulang="./Language/xegulang.xml"
+  echo "The display is a 15.6 Inches FHD model..."
+  ;;
 
 esac
 
