@@ -41,10 +41,10 @@ fi
 
 
 #Check the prerequisites
-if [[ -z $(command -v sshpass) ]] || [[ -z $(command -v nc) ]]; then
+if [[ -z $(command -v sshpass) ]] ; then
   echo -e "\n Installing the required packages, please wait for the installation to finish...\n"
   curl -s -O https://cygwin.com/setup-x86_64.exe ; chmod +x setup-x86_64.exe
-  ./setup-x86_64.exe --no-admin --quiet-mode --no-desktop --no-startmenu --site ftp://ftp-stud.hs-esslingen.de/pub/Mirrors/sources.redhat.com/cygwin/ -P sshpass,nc
+  ./setup-x86_64.exe --no-admin --quiet-mode --no-desktop --no-startmenu --site http://ftp.fau.de/cygwin/ -P sshpass
   rm -f ./setup-x86_64.exe
 fi
 
