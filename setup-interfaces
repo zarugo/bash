@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+#a script to set the network on our Asterisk machine (Ubuntu 16.04)
+
 file="/etc/network/interfaces"
 interface=$(ip -4 -f inet a | grep BROADCAST | awk '{print $2}' | cut -d ":" -f1)
 
@@ -66,7 +69,7 @@ EOF
 }
 
 if [[ $EUID -ne 0 ]]; then
-   echo "You must be root to do this, please run the script with sudo." 
+   echo "You must be root to do this, please run the script with sudo."
    exit 1
 fi
 

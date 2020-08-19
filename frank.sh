@@ -1,7 +1,8 @@
 #!/bin/bash
 #set -x
+#ciao Frank, prova questo script, ti pulisce il file come serve a te
 
-#clean the old shit
+#clean the old stuff
 rm -f final.txt
 
 grep 'PNAINAR_' fidtocas_20191207_0446.sav | tr -d '[:blank:]' > pnainar.txt

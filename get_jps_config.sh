@@ -1,10 +1,16 @@
 #!/bin/bash
+#quuick method to fetch the peripherals configuration
+#TODO: now that we have an API, use that instead of wandering inside the filesystem, it's quicker and more reliable.
+#TODO2: add the newer device types, this is quite outdated
+
+
 temp_dir=/cygdrive/c/ebb_temp
 conf_dir=/cygdrive/c/ebb_conf
 date=$(date +%F-%H-%M-%S)
 pc=$(hostname)
 ISCYG=$(uname -s)
 
+#let's check if we are on Linux or Windows - the arp command is different
 if [ $ISCYG = "Linux" ]
 	then
 	temp_dir=~/ebb_temp
@@ -15,6 +21,8 @@ elif [ $ISCYG = "CYGWIN" ]
 		conf_dir=/cygdrive/c/ebb_conf
 	fi
 
+# try to identify devices on the same network using the mac address - NB. it will work only if
+# we have a L2 connection - AKA, they are plugged on the same switch
 function GET_DEVICES () {
 	case $ISCYG in
 		Linux*)

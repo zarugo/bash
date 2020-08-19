@@ -1,5 +1,12 @@
 #!/bin/bash
 
+###################################################################
+#Script Name	: convert_jps.sh
+#Description	: Quick tool to convert JPSs to 1.12 / 1.14 in SAT environment
+#Args        	: old / new / def
+#Release      : -
+###################################################################
+
 [[ $# -ne 1 ]] && echo -e "\n  Please use \"old\" or \"new\" as an argument" || :
 
 if [[ $1 == "new" ]]; then

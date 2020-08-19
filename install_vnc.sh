@@ -1,6 +1,8 @@
 #!/bin/bash
 DEVICE=$1
 
+#use this to install the VNC server and client inside the displays
+
 #let's use pubkey auth for ssh. Create key pair in case we have not them
 if ! [[ -e ~/.ssh/id_rsa.pub ]]
  then

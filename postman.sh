@@ -1,7 +1,10 @@
 #!/bin/bash
 #set -x
+#a quick tool to send commands to the JPSs instead of sending the payloads with a rest client
+
 ISCYG=$(uname -s)
 
+#try to get the devices if on the same switch. Linux and Windows have different arp commands 
 GET_DEVICES(){
 	case $ISCYG in
 		Linux*)

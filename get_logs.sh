@@ -6,6 +6,7 @@ BACKUP_FILE="${BACKUP_DATE}.tar.gz"
 PC=$(hostname)
 ISCYG=$(uname -s)
 
+#let's check if we are on Linux or Windows
 case  $ISCYG in
 		Linux*)
 		TEMP_DIR=~/ebb_temp
@@ -21,6 +22,9 @@ case  $ISCYG in
 		fi
 		;;
 	esac
+
+# try to identify devices on the same network using the mac address - NB. it will work only if
+# we have a L2 connection - AKA, they are plugged on the same switch
 
 function GET_DEVICES () {
 	case $ISCYG in
