@@ -35,7 +35,7 @@ GOTO backup
 :reset_location:
 SET BACKUP_LOCATION=C:\Backup_JMS\janus_olap
 IF NOT EXIST %BACKUP_LOCATION% (
-				mkdir %BACKUP_LOCATION%)	
+				mkdir %BACKUP_LOCATION%)
 GOTO backup
 
 REM *********************************************
