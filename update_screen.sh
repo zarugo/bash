@@ -2,8 +2,8 @@
 #set -x
 
 ###################################################################
-#Script Name	: update_xegu.sh
-#Description	: Automatic update tool to update the JPS app on JHW and RPI
+#Script Name	: update_screen.sh
+#Description	: Automatic update tool to update the screens on devices
 #Args        	: target ip
 #Release      : 1.12_rc
 ###################################################################
@@ -11,7 +11,7 @@
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 username='root'
-password='hubparking'
+read -sp 'Password: '
 #usage help
 function usage() {
     echo -e "You must provide at most 1 argument:\n - the IP address of the device to upgrade\n"

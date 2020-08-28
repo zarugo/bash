@@ -1,6 +1,6 @@
 #!/bin/bash
 #set -x
-#a quick tool to send commands to the JPSs instead of sending the payloads with a rest client
+#a quick tool to send commands to the device instead of sending the payloads with a rest client
 
 ISCYG=$(uname -s)
 

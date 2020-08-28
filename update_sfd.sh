@@ -2,14 +2,14 @@
 #set -x
 
 ###################################################################
-#Script Name	: update_xegu_from_jps.sh
-#Description	: Automatic update tool to update xegu displays from the JPS application
+#Script Name	: update_sfd.sh
+#Description	: Automatic update tool to update screens from devices
 #Args        	: target ip
 #Release      : xxx
 ###################################################################
 
 username='root'
-password='hubparking'
+password=$2
 ip=$1
 chmod +x ./sshpass
 #prevent known_hosts issues: if the argument is an IP, delete only the public key of that IP, so we do not affect other ssh sessions
@@ -27,7 +27,7 @@ function get_type () {
 }
 
 function xegu_script () {
-  #sometimes the xegu.sh script on 7 inches displays points to a xegu_ul binary, we fix this overwriting the script every time
+  #sometimes the launch script on 7 inches displays points to a wrong binary, we fix this overwriting the script every time
   cat << 'EOF' > xegu.sh
 HOME=/home/root
 export QMLSCENE_DEVICE=softwarecontext

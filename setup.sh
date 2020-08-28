@@ -23,7 +23,7 @@ ip_set_file="/etc/dhcpcd.conf"
 OPTIONS=(
 Network/IP   "IP Settings           "
 Timezone     "Set Time Zone         "
-JBL_Config   "Edit JBL configuration"
+Config       "Edit configuration"
 Reboot       "Reboot the System     "
 Shell        "Exit to Shell         "
 )
@@ -50,7 +50,7 @@ echo $(($2 + (${#x}/4) ))
 #command. We do not use ifconfig since it's basically deprecated in Linux
 #######################################################################################
 show_current_info(){
-      if (whiptail --backtitle "JBL Network Setup" --title "Current Setting" \
+      if (whiptail --backtitle "Network Setup" --title "Current Setting" \
                 --yesno "\n\n IP Address:          $IPADDR \n\n Subnet mask:       $(cdr2mask $MASK) \n\n Default gateway:    $GW\n\n\n Do you want to change the network settings?" \
                 --defaultno  $HEIGHT $WIDTH 3>&1 1>&2 2>&3)
         then
@@ -78,7 +78,7 @@ while [ -z $result ] || [ $result == "1" ];
      do
 
         while [[ -z $ip_result ]] || [[ "$ip_result" == "1" ]] ; do
-            ipaddr=$(whiptail --backtitle "JBL Network Setup" --nocancel --inputbox "IP Address" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
+            ipaddr=$(whiptail --backtitle "Network Setup" --nocancel --inputbox "IP Address" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
             if ! [[ $ipaddr =~ $ip4 ]]; then
                 whiptail --msgbox "Invalid IP!" 10 60
                 ! true
@@ -86,7 +86,7 @@ while [ -z $result ] || [ $result == "1" ];
             ip_result=$?
         done
         while [[ -z $sm_result ]] || [[ "$sm_result" == "1" ]] ; do
-            netmask=$(whiptail --backtitle "JBL Network Setup" --nocancel --inputbox "Subnet Mask" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
+            netmask=$(whiptail --backtitle "Network Setup" --nocancel --inputbox "Subnet Mask" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
             if ! [[ $netmask =~ $ip4 ]]; then
                 whiptail --msgbox "Invalid Netmask!" 10 60
                 ! true
@@ -94,7 +94,7 @@ while [ -z $result ] || [ $result == "1" ];
             sm_result=$?
         done
         while [[ -z $gw_result ]] || [[ "$gw_result" == "1" ]] ; do
-            gateway=$(whiptail --backtitle "JBL Network Setup" --nocancel --inputbox "Default Gateway" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
+            gateway=$(whiptail --backtitle "Network Setup" --nocancel --inputbox "Default Gateway" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
             if ! [[ $gateway =~ $ip4 ]]; then
                 whiptail --msgbox "Invalid Default Gateway!" 10 60
                 ! true
@@ -102,14 +102,14 @@ while [ -z $result ] || [ $result == "1" ];
             gw_result=$?
         done
         while [[ -z $dns_result ]] || [[ "$dns_result" == "1" ]] ; do
-            dns1=$(whiptail --backtitle "JBL Network Setup" --nocancel --inputbox "Primary DNS" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
+            dns1=$(whiptail --backtitle "Network Setup" --nocancel --inputbox "Primary DNS" $HEIGHT $WIDTH  3>&1 1>&2 2>&3)
             if ! [[ $dns1 =~ $ip4 ]]; then
                 whiptail --msgbox "Invalid DNS!" 10 60
                 ! true
             fi
             dns_result=$?
         done
-        whiptail --backtitle "JBL Network Setup" --title "Are the settings correct?" --yesno "\n IP Adress: $ipaddr \n Netmask: $netmask \n Gateway: $gateway \n DNS: $dns1 \n" $HEIGHT $WIDTH 3>&1 1>&2 2>&3
+        whiptail --backtitle "Network Setup" --title "Are the settings correct?" --yesno "\n IP Adress: $ipaddr \n Netmask: $netmask \n Gateway: $gateway \n DNS: $dns1 \n" $HEIGHT $WIDTH 3>&1 1>&2 2>&3
 	result=$?
 #reset the loops in case we want to go back and assign a different network config in the same session
 	ip_result="1"
@@ -122,9 +122,9 @@ while [ -z $result ] || [ $result == "1" ];
     #Check if the file is written, usually fails for missing root permission
 	if ! [[ $? = "0" ]]
 	then
-		whiptail --backtitle "JBL Network Setup" --title "ERROR!" --msgbox "Settings are NOT written to /etc/network/interfaces and/etc/resolv.conf, be sure that you are root!" $HEIGHT $WIDTH
+		whiptail --backtitle "Network Setup" --title "ERROR!" --msgbox "Settings are NOT written to /etc/network/interfaces and/etc/resolv.conf, be sure that you are root!" $HEIGHT $WIDTH
 	else
-		whiptail --backtitle "JBL Network Setup" --title "OK!" --msgbox "New settings are written to config file, please reboot to apply" $HEIGHT $WIDTH
+		whiptail --backtitle "Network Setup" --title "OK!" --msgbox "New settings are written to config file, please reboot to apply" $HEIGHT $WIDTH
 
     fi
 
@@ -136,8 +136,8 @@ while [ -z $result ] || [ $result == "1" ];
 while true
 do
 CHOICE=$(whiptail --nocancel --clear \
-    --backtitle "JBL Setup" \
-    --title "JBL Setup" \
+    --backtitle "Setup" \
+    --title "Setup" \
     --menu "Tasks: " \
     $HEIGHT $WIDTH $CHOICE_HEIGHT \
     "${OPTIONS[@]}" \
@@ -154,7 +154,7 @@ case $CHOICE in
 		#inside it anyway
 		touch /home/hubparking/.firsttime
 	;;
-	JBL_Config)
+	Config)
 	     nano /opt/HUB/jbl/jbl-conf.json
 	;;
     Reboot)
