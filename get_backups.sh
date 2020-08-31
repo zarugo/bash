@@ -7,7 +7,7 @@
 BACKUP_DATE=$(date +%F-%H-%M-%S)
 BACKUP_FILE="${BACKUP_DATE}.tar.gz"
 PC=$(hostname)
-ISCYG=$(uname -s) 
+ISCYG=$(uname -s)
 
 #let's check if we are on Linux or Windows - the arp command is different
 case  $ISCYG in
