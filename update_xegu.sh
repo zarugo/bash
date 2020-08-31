@@ -11,7 +11,7 @@
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 username='root'
-read -sp 'Password: '
+password='hubparking'
 #usage help
 function usage() {
     echo -e "You must provide at most 1 argument:\n - the IP address of the device to upgrade\n"
