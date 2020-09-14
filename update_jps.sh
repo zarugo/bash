@@ -2,7 +2,7 @@
 #set -x
 
 ###################################################################
-#Script Name	: update_device.sh
+#Script Name	: update_jps.sh
 #Description	: Automatic update tool to update the device app on rpi and other hardware
 #Args        	: target ip
 #Release      : 1.12.5.5
