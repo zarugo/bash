@@ -2,10 +2,10 @@
 #set -x
 
 ###################################################################
-#Script Name	: update_device.sh
+#Script Name	: update_jps.sh
 #Description	: Automatic update tool to update the device app on rpi and other hardware
 #Args        	: target ip
-#Release      : 1.12.5.5
+#Release      : 1.12.5.5 
 ###################################################################
 
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
