@@ -1,0 +1,11 @@
+#!/bin/bash
+set -x 
+while read oldrefid newrefid refname; do
+	if [[ "$refname" =~ "refs/heads/master" ]]; then
+		echo "Deploying to live"
+		exit 0
+	elif [[ "$refname" =~ "refs/heads/develop" ]]; then
+		echo "Deploying to staging"
+		exit 0
+fi
+done
