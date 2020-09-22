@@ -1,0 +1,13 @@
+#!/bin/bash
+while read oval nval ref
+do
+    refs+=(${ref})
+done
+if [[ ${#refs[@]} -gt 1 ]]; then 
+	for i in ${refs[@]}; do 
+		echo "$i"
+	done
+	exit 1
+fi
+#echo ${refs[@]}
+
