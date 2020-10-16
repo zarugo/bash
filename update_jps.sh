@@ -5,11 +5,14 @@
 #Script Name	: update_jps.sh
 #Description	: Automatic update tool to update the device app on rpi and other hardware
 #Args        	: target ip
-#Release      : 1.12.5.5 
+#Release      : 1.12.5.5
 ###################################################################
 
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
+
+#make it work even if we launch it from a different path
+cd "${0%/*}"
 
 #Clean garbage from old updates
 rm -rf ConfigData* _update.sh JPSApps.tar.gz JPSApps &>/dev/null
