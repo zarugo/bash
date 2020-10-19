@@ -4,4 +4,4 @@ SET TIMESTR=%time:~0,2%%time:~3,2%%time:~6,2%
 SET LOGFILE=lpr_tickets_unlink_%DATESTR%_%TIMESTR%.log
 SET PGPASSWORD=jbl
 
-"C:\Program Files\PostgreSQL\9.6\bin\psql.exe" -U jbl -d jbl -c "UPDATE transient_usr_pass SET lpr_camera_recognitions_id = null WHERE lpr_camera_recognitions_id IS NOT null;" >> "%LOGFILE%" 2>&1
+"C:\Program Files\PostgreSQL\9.6\bin\psql.exe" -U jbl -d jbl -c "UPDATE transient_usr_pass SET lpr_camera_recognitions_id = null WHERE lpr_camera_recognitions_id IS NOT null AND status IN ('PAYED', 'IN');" >> "%LOGFILE%"
