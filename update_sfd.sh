@@ -105,11 +105,11 @@ esac
 currentlang=$(sshpass -p "$password" ssh -o "StrictHostKeyChecking no" "$username@$ip" 'md5sum /home/root/.local/share/xegu/xegulang.xml 2>/dev/null | cut -d " " -f1')
 newlang=$(md5sum $xegulang | cut -d " " -f1)
 if [[ $currentlang == "$newlang" ]]; then
-  langupdate=''
+  langupdate=false
 else
-  langupdate=yes
+  langupdate=true
 fi
-if [[ $langupdate ]]; then
+if [[ $langupdate == "true" ]]; then
   sshpass -p "$password" scp -o "StrictHostKeyChecking no" "$xegulang" "$username"@"$ip":/home/root/.local/share/xegu/xegulang.xml
 else
   :
@@ -120,11 +120,11 @@ fi
 currentbin=$(sshpass -p "$password" ssh -o "StrictHostKeyChecking no" "$username"@"$ip" 'md5sum xegu 2>/dev/null | cut -d " " -f1')
 newbin=$(md5sum "$binary" | cut -d " " -f1)
 if [[ $currentbin == "$newbin" ]]; then
-  binupdate=''
+  binupdate=false
 else
-  binupdate=yes
+  binupdate=true
 fi
-if [[ $binupdate ]]; then
+if [[ $binupdate == "true" ]]; then
   update_binary
 else
   :
