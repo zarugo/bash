@@ -84,27 +84,27 @@ fi
 
 #get the JPSApp files, save some space and rename files
 
-if [ $1 = all ]
+if [ "$1" = all ]
 	then
 		echo Getting all JPSApps...
 		for DEVICE in $(GET_DEVICES)
 			do
-				echo Getting JPSApps files from $DEVICE ....
-				scp -r -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/home/root/JPSApps ${TEMP_DIR} 1>/dev/null
+				echo Getting JPSApps files from "$DEVICE" ....
+				scp -r -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/home/root/JPSApps ${TEMP_DIR} 1>/dev/null
 				chmod 777 $TEMP_DIR
 				echo Creating archive...
-				TYPE=$(ssh -o "StrictHostKeyChecking no" root@${DEVICE} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+				TYPE=$(ssh -o "StrictHostKeyChecking no" root@"${DEVICE}" "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 				tar cfz $TEMP_DIR/"${PC}"_"${DEVICE}"_"${TYPE}"_"${BACKUP_FILE}" $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 				mv $TEMP_DIR/* $BACKUP_DIR
 			done
 	else
 		 for DEVICE in "$@"
  			do
-				echo Getting JPSApps files from $DEVICE ....
-	 			scp -r -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/home/root/JPSApps ${TEMP_DIR} 1>/dev/null
+				echo Getting JPSApps files from "$DEVICE" ....
+	 			scp -r -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/home/root/JPSApps ${TEMP_DIR} 1>/dev/null
 	 			chmod 777 $TEMP_DIR
 	 			echo Creating archive...
-				TYPE=$(ssh -o "StrictHostKeyChecking no" root@${DEVICE} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+				TYPE=$(ssh -o "StrictHostKeyChecking no" root@"${DEVICE}" "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 				tar cfz $TEMP_DIR/"${PC}"_"${DEVICE}"_"${TYPE}"_"${BACKUP_FILE}" $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 	 			mv $TEMP_DIR/* $BACKUP_DIR
 			done

@@ -77,39 +77,38 @@ fi
 if [ $1 = jbl ]
 	then
 		echo Getting Jbl log files....
-		find /cygdrive/c/jbl/jbllog -mtime -7 -print |xargs cp -p -t ${TEMP_DIR} 2>/dev/null 1>&2
-		tar cfz $TEMP_DIR/${PC}_jbl_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
+		find /cygdrive/c/jbl/jbllog -mtime -7 -print0 |xargs cp -p -t ${TEMP_DIR} 2>/dev/null 1>&2
+		tar cfz $TEMP_DIR/"${PC}"_jbl_"${BACKUP_FILE}" $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 	        mv $TEMP_DIR/* $BACKUP_DIR
 elif [ $1 = all ]
 	then
 		echo Getting all logs...
-		find /cygdrive/c/jbl/jbllog -mtime -7 -print |xargs cp -p -t ${TEMP_DIR} 2>/dev/null 1>&2
-		tar cfz $TEMP_DIR/${PC}_jbl_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
+		find /cygdrive/c/jbl/jbllog -mtime -7 -print0 |xargs cp -p -t ${TEMP_DIR} 2>/dev/null 1>&2
+		tar cfz $TEMP_DIR/"${PC}"_jbl_"${BACKUP_FILE}" $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 		mv $TEMP_DIR/* $BACKUP_DIR
 		for DEVICE in $(GET_DEVICES)
 			do
 				echo Getting log files from $DEVICE ....
-				scp -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/mnt/sdfast/Logs/* ${TEMP_DIR} 1>/dev/null
+				scp -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/mnt/sdfast/Logs/* ${TEMP_DIR} 1>/dev/null
 				chmod 777 $TEMP_DIR
 				echo Creating archive...
-				TYPE=$(ssh -o "StrictHostKeyChecking no" root@${DEVICE} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
-				tar cfz $TEMP_DIR/${PC}_${DEVICE}_${TYPE}_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
+				TYPE=$(ssh -o "StrictHostKeyChecking no" root@"${DEVICE}" "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+				tar cfz $TEMP_DIR/"${PC}"_"${DEVICE}"_"${TYPE}"_"${BACKUP_FILE}" $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 				mv $TEMP_DIR/* $BACKUP_DIR
 			done
 	else
-		 for DEVICE in $@
+		 for DEVICE in "$@"
  			do
-				echo Getting log files from $DEVICE ....
-	 			scp -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/mnt/sdfast/Logs/* ${TEMP_DIR} 1>/dev/null
+				echo Getting log files from "$DEVICE" ....
+	 			scp -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/mnt/sdfast/Logs/* ${TEMP_DIR} 1>/dev/null
 	 			chmod 777 $TEMP_DIR
 	 			echo Creating archive...
-				TYPE=$(ssh -o "StrictHostKeyChecking no" root@${DEVICE} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
-				tar cfz $TEMP_DIR/${PC}_${DEVICE}_${TYPE}_${BACKUP_FILE} $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
+				TYPE=$(ssh -o "StrictHostKeyChecking no" root@"${DEVICE}" "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+				tar cfz $TEMP_DIR/"${PC}"_"${DEVICE}"_"${TYPE}"_"${BACKUP_FILE}" $TEMP_DIR/* --remove-files 2>/dev/null 1>&2
 	 			mv $TEMP_DIR/* $BACKUP_DIR
 			done
 fi
 
-if [ $? = 0 ]
-	then
- 		echo 'All done, your log files are inside the C:\ebb_weekly_logs\ directory,use them wisely!'
-fi
+
+echo 'All done, your log files are inside the C:\ebb_weekly_logs\ directory,use them wisely!'
+
