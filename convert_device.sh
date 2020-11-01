@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###################################################################
-#Script Name	: convert_device.sh
+#Script Name	: convert_device.sh 
 #Description	: Quick tool to convert JPSs to 1.12 / 1.14 in SAT environment
 #Args        	: old / new / def
 #Release      : -
