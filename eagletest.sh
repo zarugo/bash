@@ -13,7 +13,7 @@ for ((i = 1 ; i < 1000000; i++)); do
         curl -X POST -d '{"amount" : 10.0, "timetoexit" : 0, "oldLstUid" : null}' -s http://127.0.0.1:65000/jps/api/command/lsttckt &>/dev/null
         sleep 15
         #check the log files to catch errors and kill the app
-        if [[ $(grep 'ACoinFDeckAlrmFilterEvt' /mnt/sdfast/Logs/SGPDriver/*) ]]; then
+        if grep -q 'ACoinFDeckAlrmFilterEvt' /mnt/sdfast/Logs/SGPDriver/*; then
                 echo "$(date +%F-%T) Error found on iteration nr. $i! Stopping the application" | tee -a eagletest.log
                 curl -X POST -d '{"mode":"SoftKill"}' -H "Content-Type: application/json"  -s http://127.0.0.1:65000/jps/api/command/reboot &>/dev/null
                 exit 1

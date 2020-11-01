@@ -11,7 +11,7 @@ GET_DEVICES(){
 		IPS=$(ip neigh |grep "\ 9c\:53\:cd\:" |awk '{print $1}')
 		for i in $IPS
 		do
-			TYPE=$(ssh -o "StrictHostKeyChecking no" root@${i} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+			TYPE=$(ssh -o "StrictHostKeyChecking no" root@"${i}" "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 			echo "${TYPE}_${i}"
 		done
 		;;
@@ -19,7 +19,7 @@ GET_DEVICES(){
 		IPS=$(arp.exe -a |grep 9c-53 |awk '{print $1}')
 		for i in $IPS
 		do
-			TYPE=$(ssh -o "StrictHostKeyChecking no" root@${i} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+			TYPE=$(ssh -o "StrictHostKeyChecking no" root@"${i}" "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 			echo "${TYPE}_${i}"
 		done
 		;;
@@ -50,7 +50,7 @@ then
 									HW_Reboot)
 									echo "The devices will do an Hardware reboot"
 									IP="$(echo $DEVICE | sed 's/[A-Za-z_]*//')"
-									curl -X POST -d '{"mode":"Hardware"}' http://${IP}:65000/jps/api/command/reboot --header "Content-Type:application/json"
+									curl -X POST -d '{"mode":"Hardware"}' http://"${IP}":65000/jps/api/command/reboot --header "Content-Type:application/json"
 									echo -e "\n"
 									;;
 									SW_Reboot)

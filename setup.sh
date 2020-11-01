@@ -8,10 +8,10 @@ WIDTH=50
 #First version with ifconfig - deprecated
 #HWADDR=`ifconfig eth0 | grep HW | awk ' BEGIN { FS = " " } ; { print $5 } ; '`
 #IPADDR=`ifconfig eth0 | grep "inet addr:" | awk $'{print $2}' | cut -d ":" -f 2`
-IPADDR=`ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 1`
-HWADDR=`ip link show dev eth0 | grep ether | awk '{print $2}'`
-MASK=`ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 2`
-GW=`ip route list | grep default | awk '{print $3}' | head -n 1`
+IPADDR=$(ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 1)
+HWADDR=$(ip link show dev eth0 | grep ether | awk '{print $2}')
+MASK=$(ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 2)
+GW=$(ip route list | grep default | awk '{print $3}' | head -n 1)
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 ip4_set="$octet\\.$octet\\.$octet\\.$octet"

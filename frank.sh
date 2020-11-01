@@ -11,8 +11,8 @@ grep -E 'COLIN.+PNAAR' fidtocas_20191207_0446.sav | tr -d '[:blank:]' > colin_pn
 #for each line extract the VAXXXX, do the match and if it finds domething, append the line
 for line in $(cat pnainar.txt); do
     artcode=$(echo $line |grep -oP 'PNAINAR_\K(VA[\d]{5})(?=[\d]*)')
-    match=$(grep $artcode colin_pnaar.txt | tail -n1)
-    [[ -z "$match" ]] && echo ${line} >> final.txt || echo -n "${line}${match}" | sed 's/\r//' >> final.txt
+    match=$(grep "$artcode" colin_pnaar.txt | tail -n1)
+    [[ -z "$match" ]] && echo "${line}" >> final.txt || echo -n "${line}${match}" | sed 's/\r//' >> final.txt
 done
 
 #add the colin-art to the file

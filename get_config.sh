@@ -11,11 +11,11 @@ pc=$(hostname)
 ISCYG=$(uname -s)
 
 #let's check if we are on Linux or Windows - the arp command is different
-if [ $ISCYG = "Linux" ]
+if [ "$ISCYG" = "Linux" ]
 	then
 	temp_dir=~/ebb_temp
 	conf_dir=~/ebb_conf
-elif [ $ISCYG = "CYGWIN" ]
+elif [ "$ISCYG" = "CYGWIN" ]
 	then
 		temp_dir=/cygdrive/c/ebb_temp
 		conf_dir=/cygdrive/c/ebb_conf
@@ -67,8 +67,8 @@ fi
 
 if [ -e /cygdrive/c/jbl/jbl-conf.json ] && [ -e /cygdrive/c/jbl/jbllog/log4j2.xml ]
 	then
-		cp /cygdrive/c/jbl/jbl-conf.json ${temp_dir}/jbl-conf_${pc}_${date}.json 2>/dev/null
-		cp /cygdrive/c/jbl/jbllog/log4j2.xml ${temp_dir}/log4j2_${pc}_${date}.xml 2>/dev/null
+		cp /cygdrive/c/jbl/jbl-conf.json ${temp_dir}/jbl-conf_"${pc}"_"${date}".json 2>/dev/null
+		cp /cygdrive/c/jbl/jbllog/log4j2.xml ${temp_dir}/log4j2_"${pc}"_"${date}".xml 2>/dev/null
 	else
 		echo "No jbl log found!"
 
@@ -78,20 +78,20 @@ fi
 
 for DEVICE in $(GET_DEVICES)
 	do
-	 	echo Getting config file from $DEVICE ....
-		TYPE=$(ssh -o "StrictHostKeyChecking no" root@${DEVICE} "ps |grep "[J]PSApplication" |awk '{print \$6}'")
+	 	echo Getting config file from "$DEVICE" ....
+		TYPE=$(ssh -o "StrictHostKeyChecking no" root@"${DEVICE}" "ps |grep "[J]PSApplication" |awk '{print \$6}'")
 		case $TYPE in
 			AppAps)
-					scp -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
+					scp -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/apsapp/ApsApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
 					;;
 			AppLe)
-					scp -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
+					scp -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/leapp/LeApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
 					;;
 			AppLx)
-					scp -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
+					scp -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
 					;;
 			AppApl)
-					scp -o "StrictHostKeyChecking no" -r -p root@$DEVICE:/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
+					scp -o "StrictHostKeyChecking no" -r -p root@"$DEVICE":/home/root/JPSApps/JPSApplication/Resources/www/webcfgtool/aplapp/AplApp/ConfigData.json ${temp_dir}/ConfigData_${TYPE}_${DEVICE}_${date}.json 1>/dev/null
 					;;
 				*)
 					echo "Device type is unknown..."
@@ -102,6 +102,6 @@ for DEVICE in $(GET_DEVICES)
 	done
 
 #create a single archive
-tar cfz $temp_dir/${pc}_${date}_conf.tar.gz $temp_dir/* --remove-files 2>/dev/null 1>&2
+tar cfz $temp_dir/"${pc}"_"${date}"_conf.tar.gz $temp_dir/* --remove-files 2>/dev/null 1>&2
 mv $temp_dir/* $conf_dir
 echo 'All done, the config files are inside the "ebb_conf" directory'
