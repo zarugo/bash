@@ -8,10 +8,10 @@ WIDTH=50
 #First version with ifconfig - deprecated
 #HWADDR=`ifconfig eth0 | grep HW | awk ' BEGIN { FS = " " } ; { print $5 } ; '`
 #IPADDR=`ifconfig eth0 | grep "inet addr:" | awk $'{print $2}' | cut -d ":" -f 2`
-IPADDR=`ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 1`
-HWADDR=`ip link show dev eth0 | grep ether | awk '{print $2}'`
-MASK=`ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 2`
-GW=`ip route list | grep default | awk '{print $3}' | head -n 1`
+IPADDR=$(ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 1)
+HWADDR=$(ip link show dev eth0 | grep ether | awk '{print $2}')
+MASK=$(ip addr show dev eth0 | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 2)
+GW=$(ip route list | grep default | awk '{print $3}' | head -n 1)
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
 ip4_set="$octet\\.$octet\\.$octet\\.$octet"
@@ -51,7 +51,7 @@ echo $(($2 + (${#x}/4) ))
 #######################################################################################
 show_current_info(){
       if (whiptail --backtitle "OV Network Setup" --title "Current Setting" \
-                --yesno "\n\n IP Address:          $IPADDR \n\n Subnet mask:       $(cdr2mask $MASK) \n\n Default gateway:    $GW\n\n\n Do you want to change the network settings?" \
+                --yesno "\n\n IP Address:          $IPADDR \n\n Subnet mask:       $(cdr2mask "$MASK") \n\n Default gateway:    $GW\n\n\n Do you want to change the network settings?" \
                 --defaultno  $HEIGHT $WIDTH 3>&1 1>&2 2>&3)
         then
 	   ip_sub_menu
@@ -62,7 +62,7 @@ show_current_info(){
 #we use sed with regex to find and change values
 #######################################################################################
 set_ip(){
-sed -i -r "s:^static ip_address=$ip4_set\/[1-9]{1,2}:static ip_address=$ipaddr/$(mask2cdr $netmask):g" $ip_set_file
+sed -i -r "s:^static ip_address=$ip4_set\/[1-9]{1,2}:static ip_address=$ipaddr/$(mask2cdr "$netmask"):g" $ip_set_file
 sed -i -r "s:^static routers=$ip4_set\b:static routers=$gateway:g" $ip_set_file
 sed -i -r "s:^static domain_name_servers=$ip4_set\b:static domain_name_servers=$dns1:g" $ip_set_file
 
@@ -74,7 +74,7 @@ sed -i -r "s:^static domain_name_servers=$ip4_set\b:static domain_name_servers=$
 #network ip collection from the user
 #######################################################################################
 ip_sub_menu(){
-while [ -z $result ] || [ $result == "1" ];
+while [ -z "$result" ] || [ "$result" == "1" ];
      do
 
         while [[ -z $ip_result ]] || [[ "$ip_result" == "1" ]] ; do
