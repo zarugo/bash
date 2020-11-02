@@ -10,30 +10,30 @@ cdr2mask()
 {
 set -- $((5 - ($1 / 8) )) 255 255 255 255 $(( (255 << (8 - ($1 % 8))) & 255 )) 000
 [ $1 -gt 1 ] && shift $1 || shift
-echo ${1-0}.${2-0}.${3-0}.${4-0}
+echo "${1-0}"."${2-0}"."${3-0}"."${4-0}"
 }
 
 getinfo()
 {
   echo "You actual configuration is:"
-  ip addr show dev $interface | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 1
-  cdr2mask $(ip addr show dev $interface | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 2)
+  ip addr show dev "$interface" | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 1
+  cdr2mask $(ip addr show dev "$interface" | grep -E '(inet )' | awk '{print $2}' | cut -d "/" -f 2)
   ip route list | grep default | awk $'{print $3}' | head -n 1
   echo "--------------------------------------------"
   echo "Your dns config is:"
   cat /etc/resolv.conf | tail -n +3
   echo "--------------------------------------------"
   echo "Press ENTER to use default"
-  read -p "Enter your gateway ip address:    (use default 192.168.1.1   ?):" routerip
-  [ ! -z "$routerip" ] || routerip=192.168.1.1
-  read -p "Enter netmask for your network:   (use default 255.255.255.0 ?):" netmask
-  [ ! -z "$netmask" ] || netmask=255.255.255.0
-  read -p "Enter ip address for your server: (use default 192.168.1.50  ?):" staticip
-  [ ! -z "$staticip" ] || staticip=192.168.1.50
-  read -p "Enter ip address for your DNS   : (use default 192.168.1.1   ?):" nameserverip
-  [ ! -z "$nameserverip" ] || nameserverip=192.168.1.1
-  read -p "Enter your domain name          : (use default faac          ?):" domainlocal
-  [ ! -z "$domainlocal" ] || domainlocal=faac
+  read -rp "Enter your gateway ip address:    (use default 192.168.1.1   ?):" routerip
+  [ -n "$routerip" ] || routerip=192.168.1.1
+  read -rp "Enter netmask for your network:   (use default 255.255.255.0 ?):" netmask
+  [ -n "$netmask" ] || netmask=255.255.255.0
+  read -pr "Enter ip address for your server: (use default 192.168.1.50  ?):" staticip
+  [ -n "$staticip" ] || staticip=192.168.1.50
+  read -pr "Enter ip address for your DNS   : (use default 192.168.1.1   ?):" nameserverip
+  [ -n "$nameserverip" ] || nameserverip=192.168.1.1
+  read -pr "Enter your domain name          : (use default faac          ?):" domainlocal
+  [ -n "$domainlocal" ] || domainlocal=faac
 
 }
 
@@ -61,7 +61,7 @@ EOF
   echo ""
   echo "Your informatons was saved in '$1' file."
   echo ""
-  read -p "Apply the new configuration? [y/n]: " yn2
+  read -rp "Apply the new configuration? [y/n]: " yn2
   case $yn2 in
     [Yy]* ) $("reboot");;
   esac
@@ -96,7 +96,7 @@ echo "Default name server         : $domainlocal"
 echo ""
 
 while true; do
-  read -p "Are these informations correct? [y/n]: " yn
+  read -rp "Are these informations correct? [y/n]: " yn
   case $yn in
     [Yy]* ) writeinterfacefile $file;;
     [Nn]* ) getinfo;;
