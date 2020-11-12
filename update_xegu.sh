@@ -52,13 +52,13 @@ fi
 
 #Get all the info we need on the device (hardware type and configuration)
 function get_type () {
-  type=$(sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'fbset | grep "mode " | awk "{print \$2}" | tr -d "\"" | cut -d "-" -f1')
+  type=$(sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'fbset | grep "mode " | awk "{print \$2}" | tr -d "\"" | cut -d "-" -f1')
   if [[ $type == '800x480' ]]; then
-    ul=$(sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'ls /home/root/xegu_ul 2>/dev/null')
+    ul=$(sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'ls /home/root/xegu_ul 2>/dev/null')
   fi
 }
 
-function xegu_script () {
+function ul_script () {
   #sometimes the xegu.sh script on 7 inches displays points to a xegu_ul binary, we fix this overwriting the script every time
   cat << 'EOF' > xegu.sh
 HOME=/home/root
@@ -76,9 +76,29 @@ done
 # exit 0
 EOF
 }
+function xegu_script () {
+  cat << 'EOF' > xegu.sh
+  HOME=/home/root
+export QT_QPA_EGLFS_HIDECURSOR=1
+export QT_QPA_EGLFS_DISABLE_INPUT=0
+export QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/event0
+
+while [ 1 ]
+do
+	echo \# Launch \"xegu LITE\" app...
+	date
+	res=$(fbset | grep "mode " | awk "{print \$2}" | tr -d "\"" | cut -d "-" -f1)	
+	cd /home/root
+    [ $res == "1376x768" ] && fbset -xres 1366 -yres 768
+    ./xegu -platform eglfs > /dev/null 2>&1
+	sleep 1
+done
+# exit 0
+EOF
+}
 
 function update_display () {
-  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'find /home/root/ -regex ".*xegu.*old" | xargs rm'
+  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'find /home/root/ -regex ".*xegu.*old" | xargs rm'
   #TBD check if we have space - for some reason, the space is very little but we are able to upload the files anyway
   #occupied=$(sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'df -h | grep ubi0 | awk "{print \$5}" | cut -d "%" -f1')
   # if [[ $occupied -ge 88 ]]; then
@@ -89,17 +109,22 @@ function update_display () {
   #  fi
   #if we have the xegu_ul binary, we store it as xegu.old and push the xegu binary
  if [[ $ul ]]; then
-    sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'mv /home/root/xegu_ul /home/root/xegu'
+    sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'mv /home/root/xegu_ul /home/root/xegu'
+    ul_script
+    sshpass -p $password scp -o "StrictHostKeyChecking no" xegu.sh $username@"$ip":/home/root/xegu.sh
+    sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'chmod +x /home/root/xegu.sh'
+    rm -f xegu.sh
+    elif [[ $type != '800x480' ]]; then
     xegu_script
-    sshpass -p $password scp -o "StrictHostKeyChecking no" xegu.sh $username@$ip:/home/root/xegu.sh
-    sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'chmod +x /home/root/xegu.sh'
+    sshpass -p $password scp -o "StrictHostKeyChecking no" xegu.sh $username@"$ip":/home/root/xegu.sh
+    sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'chmod +x /home/root/xegu.sh'
     rm -f xegu.sh
   fi
-  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'mv /home/root/xegu /home/root/xegu.old'
-  sshpass -p $password scp -o "StrictHostKeyChecking no" $xegulang $username@$ip:/home/root/.local/share/xegu/xegulang.xml
-  sshpass -p $password scp -o "StrictHostKeyChecking no" $binary $username@$ip:/home/root/xegu
-  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'chmod +x xegu'
-  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@$ip 'reboot'
+  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'mv /home/root/xegu /home/root/xegu.old'
+  sshpass -p $password scp -o "StrictHostKeyChecking no" "$xegulang" $username@"$ip":/home/root/.local/share/xegu/xegulang.xml
+  sshpass -p $password scp -o "StrictHostKeyChecking no" "$binary" $username@"$ip":/home/root/xegu
+  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'chmod +x xegu'
+  sshpass -p $password ssh -o "StrictHostKeyChecking no" $username@"$ip" 'reboot'
 
 
 }
