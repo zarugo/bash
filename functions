@@ -41,7 +41,7 @@ function get_loc_type () {
 		;;
 	esac
 
-  read -p "Device type is unknown...Set the target pp to update (AppAps/AppLe/AppLx/AppApl/AppOv/AppDr/AppLs/AppRdrWtr)? " TYPE
+  read -rp "Device type is unknown...Set the target pp to update (AppAps/AppLe/AppLx/AppApl/AppOv/AppDr/AppLs/AppRdrWtr)? " TYPE
 }
 
 #Get the remote application type and set global variables
