@@ -1,6 +1,5 @@
-#!/bin/bash
 ###################################################################
-#Script Name	: Funcions repo for update_device.sh - not to be executed directly
+#Script Name	: Funcions repo for update_jps.sh - not to be executed directly
 #Description	: Provides functions needed to the main script
 #Args        	: None
 #Release      : 1.12.5.5
@@ -47,11 +46,16 @@ function get_loc_type () {
 #Get the remote application type and set global variables
 #about folders and hardware
 function get_rem_type () {
-  TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
-  if [[ $? -eq 28 ]]; then
-    echo -e "\nDevice type is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
-    exit 1
+	TYPE=$(curl -k -s -m 2 https://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
+	if [[ $? -eq 28 ]]; then
+		echo -e "\n https attempt failed, trying again with http..."
+	TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
+    if [[ $? -eq 28 ]]; then
+		echo -e "\nDevice type $TYPE is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
+		exit 1
+	fi
   fi
+	  
   HW=$(ssh -o "StrictHostKeyChecking no" root@$JPS_DEVICE_IP "hostname")
 
   if [[ $HW == "ebb-hw-jhw-2-0" ]]
@@ -77,8 +81,14 @@ function get_type () {
 	else
 		get_rem_type
 	fi
-
+  
 	case $TYPE in
+		*AppApc*)
+		;&
+		*AppRdrWtr*)
+		;&
+		*AppOv*)
+		;&
 		*AppAps*)
 		LOGIN=root
 		TYPE=AppAps
@@ -87,6 +97,14 @@ function get_type () {
 		SCRIPT=ApsAppRun$SCRIPTEXT
 		WORKDIR=$JPS_PARENT_PATH
 		;;
+		*AppDr*)
+		;&
+		*AppLePos*)
+		;&
+		*AppLs*)
+		;&
+		*AppOc*)
+		;&
 		*AppLe*)
 		LOGIN=root
 		TYPE=AppLe
@@ -95,15 +113,11 @@ function get_type () {
 		SCRIPT=LeAppRun$SCRIPTEXT
 		WORKDIR=$JPS_PARENT_PATH
 		;;
-		*AppLx*)
-		LOGIN=root
-		TYPE=AppLx
-		APPFLD=AplApp
-		WEBFLD=aplapp
-		SCRIPT=LxAppRun$SCRIPTEXT
-		WORKDIR=$JPS_PARENT_PATH
-		;;
 		*AppApl*)
+		;&
+		*AppLxPos*)
+		;&
+		*AppLx*)
 		LOGIN=root
 		TYPE=AppApl
 		APPFLD=AplApp
@@ -111,40 +125,8 @@ function get_type () {
 		SCRIPT=AplAppRun$SCRIPTEXT
 		WORKDIR=$JPS_PARENT_PATH
 		;;
-		*AppOv*)
-		LOGIN=root
-		TYPE=AppOv
-		APPFLD=ApsApp
-		WEBFLD=apsapp
-		SCRIPT=OvAppRun$SCRIPTEXT
-		WORKDIR=$JPS_PARENT_PATH
-		;;
-		*AppDr*)
-		LOGIN=root
-		TYPE=AppDr
-		APPFLD=LeApp
-		WEBFLD=leapp
-		SCRIPT=DrAppRun$SCRIPTEXT
-		WORKDIR=$JPS_PARENT_PATH
-		;;
-		*AppLs*)
-		LOGIN=root
-		TYPE=AppLs
-		APPFLD=LeApp
-		WEBFLD=leapp
-		SCRIPT=LsAppRun$SCRIPTEXT
-		WORKDIR=$JPS_PARENT_PATH
-		;;
-		*AppRdrWtr*)
-		LOGIN=root
-		TYPE=AppRdrWtr
-		APPFLD=ApsApp
-		WEBFLD=apsapp
-		SCRIPT=RdrWtrAppRun$SCRIPTEXT
-		WORKDIR=$JPS_PARENT_PATH
-		;;
-			 *)
-		echo -e "\nDevice $TYPE type is unknown...make sure the JPSApplication is running on the device"
+		*)
+		echo -e "\nDevice $TYPE type is unknown or not retrievable...make sure the JPSApplication is running on the device"
 		exit 1
 		;;
 	esac
@@ -156,11 +138,12 @@ function get_config() {
   cp ./JPSApps_$HW/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json ./ConfigData_NEW.json
   cp ./JPSApps_$HW/JPSApplication/Resources/www/webcfgtool/outsched/ConfigData.json ./ConfigData_SCHED_NEW.json
   cp -r JPSApps_$HW JPSApps
-  find ./JPSApps/JPSApplication/ -name "*AppRun$SCRIPTEXT" ! -name "${SCRIPT}" -delete
-  find ./JPSApps/JPSApplication/Resources -maxdepth 1 -type d -name "*App" ! -name "${APPFLD}" -exec rm -fr {} \; &>/dev/null
-  find ./JPSApps/JPSApplication/Resources/www/webcfgtool -type d -name "*app" ! -name "${WEBFLD}" -exec rm -fr {} \; &>/dev/null
-  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_* 2>/dev/null
-  cp ./JPSApps/JPSApplication/${SCRIPT} ./JPSApps/JPSApplication/XXXAppRun$SCRIPTEXT
+  #find ./JPSApps/JPSApplication/ -name "*AppRun$SCRIPTEXT" ! -name "${SCRIPT}" -delete
+  #find ./JPSApps/JPSApplication/Resources -maxdepth 1 -type d -name "*App" ! -name "${APPFLD}" -exec rm -fr {} \; &>/dev/null
+  #find ./JPSApps/JPSApplication/Resources/www/webcfgtool -type d -name "*app" ! -name "${WEBFLD}" -exec rm -fr {} \; &>/dev/null
+  #rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* ./JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/ConfigData.json_* 2>/dev/null
+  rm ./JPSApps/JPSApplication/Resources/AdditionalData.json_* 2>/dev/null
+  cp ./JPSApps/JPSApplication/Scripts/${SCRIPT} ./JPSApps/JPSApplication/XXXAppRun$SCRIPTEXT
 
   if [[ -d $JPS_PARENT_PATH ]]; then
 	cp $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
@@ -190,12 +173,12 @@ function update_script() {
   	echo 'REMOTE: No JPSApps.tar.gz package found for update '
   	exit 1
   fi
-
+  
   RESOURCESDIR=\${WORKDIR}/JPSApps/JPSApplication/Resources
   APPDB_FDB=\${RESOURCESDIR}/${APPFLD}/AppDB.fdb
   JPSAPPDB_SQLITE=\${RESOURCESDIR}/jpsAppDB.sqlite
   JPSUSPDB_SQLITE=\${RESOURCESDIR}/jpsUspDB.sqlite
-
+  
   if [[ -f \$WORKDIR/JPSApps/JPSApplication/Resources/Cash/cashDB.fdb ]]
     then
     APS=true
@@ -228,7 +211,7 @@ function update_script() {
 
   #backup the APPDB_FDB
   cp \$APPDB_FDB .
-
+  
   #backup cashDB
   [[ \$APS ]] && cp \$CASH . || :
 
@@ -271,7 +254,7 @@ function update_script() {
   fi
 
   mv jpsAppDB.sqlite \$JPSAPPDB_SQLITE >/dev/null
-
+  
   mv jpsUspDB.sqlite \$JPSUSPDB_SQLITE >/dev/null
 
   mv ./AppDB.fdb \$APPDB_FDB
@@ -287,7 +270,7 @@ function update_script() {
 	then
 	mkdir \$CASHDIR
 	mv ./cashDB.fdb \$CASH
-
+	
     if [ \$? != 0 ]
   	  then
   	  echo 'REMOTE CRITICAL ERROR!! \

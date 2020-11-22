@@ -16,6 +16,7 @@ fi
 if [[ "$HW" == "jhw" ]]; then
 
     [[ -d /sys/block/mmcblk0/mmcblk0p1 ]] && BLOCK="true" || BLOCK="false"
+    touch /mnt/sd/.file 2>/dev/null
     [[ -w /mnt/sd/ ]] && RO="false" || RO="true"
     [[ "$RO" == "true" ]] && FREE=0 || FREE=$(( $(stat -f /mnt/sd | grep Available | awk '{print $7}') * 4096 ))
     case $(df -PTh /mnt/sd |tail -n 1 | awk '{print $1}') in
@@ -29,6 +30,7 @@ if [[ "$HW" == "jhw" ]]; then
 
 elif [[ "$HW" == "rpi" ]]; then
   [[ -d /sys/block/mmcblk0/mmcblk0p3 ]] && BLOCK="true" || BLOCK="false"
+  touch /mnt/sd/.file 2>/dev/null
   [[ -w /mnt/sd/ ]] && RO="false" || RO="true"
   [[ "$RO" == "true" ]] && FREE=0 || FREE=$(( $(stat -f /mnt/sd | grep Available | awk '{print $7}') * 4096 ))
   case $(df -PTh /mnt/sd |tail -n 1 | awk '{print $1}') in
