@@ -17,7 +17,7 @@ function usage() {
 #Get the application type and set global variables
 #about folders and hardware
 function get_loc_type () {
-  	read -p "Set the target env to update (jhw/rpi/win)? " answer
+  	read -rp "Set the target env to update (jhw/rpi/win)? " answer
 	case ${answer:0:1} in
 		j )
 			echo jhw
@@ -46,17 +46,17 @@ function get_loc_type () {
 #Get the remote application type and set global variables
 #about folders and hardware
 function get_rem_type () {
-	TYPE=$(curl -k -s -m 2 https://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
+	TYPE=$(curl -k -s -m 2 https://"$JPS_DEVICE_IP":"$JSPORT"/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
 	if [[ $? -eq 28 ]]; then
 		echo -e "\n https attempt failed, trying again with http..."
-	TYPE=$(curl -s -m 2 http://$JPS_DEVICE_IP:$JSPORT/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
+	TYPE=$(curl -s -m 2 http://"$JPS_DEVICE_IP":"$JSPORT"/jps/api/status) #try 1st the default port 65000 (or the port passed by argument)
     if [[ $? -eq 28 ]]; then
 		echo -e "\nDevice type $TYPE is unknown...make sure the JPSApplication is running on the device and the IP address is correct"
 		exit 1
 	fi
   fi
 	  
-  HW=$(ssh -o "StrictHostKeyChecking no" root@$JPS_DEVICE_IP "hostname")
+  HW=$(ssh -o "StrictHostKeyChecking no" root@"$JPS_DEVICE_IP" "hostname")
 
   if [[ $HW == "ebb-hw-jhw-2-0" ]]
     then
@@ -67,7 +67,7 @@ function get_rem_type () {
 	HW=rpi
 	SCRIPTEXT=.sh
   else
-    echo -e "\nHardware type "$HW" is unknown"
+    echo -e "\nHardware type \"$HW\" is unknown"
     exit 1
   fi
 }
@@ -146,11 +146,11 @@ function get_config() {
   cp ./JPSApps/JPSApplication/Scripts/${SCRIPT} ./JPSApps/JPSApplication/XXXAppRun$SCRIPTEXT
 
   if [[ -d $JPS_PARENT_PATH ]]; then
-	cp $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
-	cp $WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+	cp "$WORKDIR"/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
+	cp "$WORKDIR"/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
   else
-	scp -o "StrictHostKeyChecking no" -p $LOGIN@$JPS_DEVICE_IP:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
-	scp -o "StrictHostKeyChecking no" -p $LOGIN@$JPS_DEVICE_IP:$WORKDIR/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
+	scp -o "StrictHostKeyChecking no" -p $LOGIN@"$JPS_DEVICE_IP":"$WORKDIR"/JPSApps/JPSApplication/Resources/www/webcfgtool/outsched/OutSched/ConfigData.json ./ConfigData_SCHED_ORIG.json 1>/dev/null
+	scp -o "StrictHostKeyChecking no" -p $LOGIN@"$JPS_DEVICE_IP":"$WORKDIR"/JPSApps/JPSApplication/Resources/www/webcfgtool/${WEBFLD}/${APPFLD}/ConfigData.json ./ConfigData_ORIG.json 1>/dev/null
   fi
 }
 
