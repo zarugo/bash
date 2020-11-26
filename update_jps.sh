@@ -9,7 +9,7 @@
 ###################################################################
 
 #make it work even if we launch it from a different path
-cd "${0%/*}"
+cd "${0%/*}" || exit
 
 octet="(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
 ip4="^$octet\\.$octet\\.$octet\\.$octet$"
